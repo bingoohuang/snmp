@@ -16,6 +16,7 @@ import (
 type Options struct {
 	Community string
 	Verbose   bool
+	TrapSend  bool
 	Targets   arrayFlags
 	TrapAddr  string
 }
@@ -32,6 +33,7 @@ func (i *arrayFlags) Set(value string) error {
 func (o *Options) InitFlags() {
 	flag.StringVar(&o.Community, "c", "public", "")
 	flag.BoolVar(&o.Verbose, "V", false, "")
+	flag.BoolVar(&o.TrapSend, "T", false, "")
 	flag.Var(&o.Targets, "t", "")
 	flag.StringVar(&o.TrapAddr, "trap", "", "")
 
@@ -39,6 +41,7 @@ func (o *Options) InitFlags() {
 		_, _ = fmt.Fprintf(os.Stderr, `Usage of snmp:
   -c    string Default SNMP community (default "public")
   -t    value Default SNMP community
+  -T    send trap values
   -trap trap server listening address, eg: :9162
   -V    Verbose logging of packets
 `)
@@ -60,6 +63,7 @@ func main() {
 
 type Target struct {
 	*g.GoSNMP
+	*Options
 	target string
 	oids   []string
 }
@@ -72,11 +76,12 @@ func (o *Options) do(target string, oids []string) {
 	t := o.createTarget(target, oids)
 	if err := t.Connect(); err != nil {
 		log.Printf("E! Connect() err: %v", err)
-		return
+		os.Exit(1)
 	}
 
 	defer t.Close()
 
+	t.trapSend()
 	t.snmpGet()
 	t.snmpWalk()
 }
@@ -106,17 +111,45 @@ func (t *Target) snmpGet() {
 	}
 }
 
+func (t *Target) trapSend() {
+	if !t.TrapSend {
+		return
+	}
+
+	trap := g.SnmpTrap{
+		Variables: []g.SnmpPDU{{
+			Name:  "1.3.6.1.2.1.1.6",
+			Type:  g.ObjectIdentifier,
+			Value: "1.3.6.1.2.1.1.6.10",
+		}, {
+			Name:  "1.3.6.1.2.1.1.7",
+			Type:  g.OctetString,
+			Value: "Testing TCP trap...",
+		}, {
+			Name:  "1.3.6.1.2.1.1.8",
+			Type:  g.Integer,
+			Value: 123,
+		}},
+	}
+
+	if _, err := t.SendTrap(trap); err != nil {
+		log.Printf("E! SendTrap() err: %v", err)
+		os.Exit(1)
+	}
+
+	os.Exit(0)
+}
+
 func printPdu(typ, target string, i int, pdu g.SnmpPDU) {
 	fmt.Printf("[%s][%s][%d] %s = ", typ, target, i, pdu.Name)
 
 	switch pdu.Type {
 	case g.OctetString:
-		fmt.Printf("string: %s\n", pdu.Value.([]byte))
+		fmt.Printf("%v: %s\n", pdu.Type, pdu.Value.([]byte))
+	case g.ObjectIdentifier:
+		fmt.Printf("%v: %s\n", pdu.Type, pdu.Value.(string))
 	default:
-		// ... or often you're just interested in numeric values.
-		// ToBigInt() will return the Value as a BigInt, for plugging
-		// into your calculations.
-		fmt.Printf("number: %d\n", g.ToBigInt(pdu.Value))
+		fmt.Printf("%v: %v\n", pdu.Type, pdu.Value)
 	}
 }
 
@@ -142,9 +175,10 @@ func (o *Options) createTarget(target string, oids []string) Target {
 	refinedTarget := refineTargetForOutput(gs)
 
 	return Target{
-		GoSNMP: gs,
-		target: refinedTarget,
-		oids:   oids,
+		GoSNMP:  gs,
+		target:  refinedTarget,
+		oids:    oids,
+		Options: o,
 	}
 }
 
@@ -206,7 +240,7 @@ func (o *Options) trap() {
 func trapHandler(packet *g.SnmpPacket, addr *net.UDPAddr) {
 	log.Printf("got trapdata from %s", addr.IP)
 	for i, v := range packet.Variables {
-		printPdu(" trap", addr.String(), i, v)
+		printPdu("trap", addr.String(), i, v)
 	}
 }
 

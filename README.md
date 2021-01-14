@@ -28,6 +28,13 @@ start snmp trap server:
 [ trap][127.0.0.1:56368][0] .1.3.6.1.2.1.1.3.0 = number: 87675610
 [ trap][127.0.0.1:56368][1] .1.3.6.1.6.3.1.1.4.1.0 = number: 0
 [ trap][127.0.0.1:56368][2] .1.3.6.1.4.1.43353.1.1.2.0 = string: bingoohuang
+
+# snmp -trap :9162
+2021/01/14 13:53:49 got trapdata from 127.0.0.1
+[trap][127.0.0.1:59549][0] .1.3.6.1.2.1.1.3.0 = TimeTicks: 1610603629
+[trap][127.0.0.1:59549][1] .1.3.6.1.2.1.1.6 = ObjectIdentifier: .1.3.6.1.2.1.1.6.10
+[trap][127.0.0.1:59549][2] .1.3.6.1.2.1.1.7 = OctetString: Testing TCP trap...
+[trap][127.0.0.1:59549][3] .1.3.6.1.2.1.1.8 = Integer: 123
 ```
 
 Send A Test Trap:
@@ -35,6 +42,7 @@ Send A Test Trap:
 ```sh
 # snmptrap -v 2c -c public localhost:9162 '' 1.3.6.1.4.1.8072.2.3.0.1 1.3.6.1.4.1.43353.1.1.2.0  s bingoohuang
 # snmptrap -v 2c -c public localhost:9162 '' 1.3.6.1.4.1.8072.2.3.0.1 1.3.6.1.4.1.8072.2.3.2.1 i 123456
+# snmp -T -t 127.0.0.1:9162
 ```
 
 ## resources
