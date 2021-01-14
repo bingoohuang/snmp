@@ -13,6 +13,7 @@ import (
 
 type Options struct {
 	Community string
+	Verbose   bool
 	Targets   arrayFlags
 }
 
@@ -29,6 +30,7 @@ func (i *arrayFlags) Set(value string) error {
 
 func (o *Options) InitFlags() {
 	flag.StringVar(&o.Community, "c", "public", "Default SNMP community")
+	flag.BoolVar(&o.Verbose, "V", false, "Do verbose logging of packets")
 	flag.Var(&o.Targets, "t", "Default SNMP community")
 }
 
@@ -39,12 +41,12 @@ func main() {
 	flag.Parse()
 
 	for _, t := range options.Targets {
-		do(t, options, flag.Args())
+		options.do(t, flag.Args())
 	}
 }
 
-func do(target string, options Options, oids []string) {
-	target, gs, err := createSnmp(target, options)
+func (o *Options) do(target string, oids []string) {
+	target, gs, err := o.createSnmp(target)
 	if err != nil {
 		log.Printf("W! failed to create snmp error: %v", err)
 		return
@@ -89,7 +91,7 @@ const (
 	DefaultSnmpPort = 161
 )
 
-func createSnmp(target string, options Options) (refinedTarget string, gs *g.GoSNMP, err error) {
+func (o *Options) createSnmp(target string) (refinedTarget string, gs *g.GoSNMP, err error) {
 	gs = &g.GoSNMP{
 		Port:               DefaultSnmpPort,
 		Transport:          "udp",
@@ -101,8 +103,17 @@ func createSnmp(target string, options Options) (refinedTarget string, gs *g.GoS
 		MaxOids:            g.MaxOids,
 	}
 
+	if o.Verbose {
+		gs.Logger = log.New(log.Writer(), log.Prefix(), log.Flags())
+
+		// Function handles for collecting metrics on query latencies.
+		var sent time.Time
+		gs.OnSent = func(*g.GoSNMP) { sent = time.Now() }
+		gs.OnRecv = func(*g.GoSNMP) { log.Printf("Query latency: %s", time.Since(sent)) }
+	}
+
 	if p := strings.LastIndex(target, "@"); p < 0 {
-		gs.Community = options.Community
+		gs.Community = o.Community
 	} else {
 		gs.Community = target[:p]
 		target = target[p+1:]
