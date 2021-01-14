@@ -33,49 +33,53 @@ func (i *arrayFlags) Set(value string) error {
 }
 
 func (o *Options) ParseFlags() {
-	var x arrayFlags
+	var x, y, z arrayFlags
 
 	flag.StringVar(&o.Mode, "mode", "get/walk", "")
 	flag.StringVar(&o.Community, "c", "public", "")
 	flag.Var(&o.Targets, "t", "")
 	flag.Var(&x, "x", "")
+	flag.Var(&y, "y", "")
+	flag.Var(&z, "z", "")
 	flag.Var(&o.Oids, "oid", "")
 	flag.StringVar(&o.TrapAddr, "trap", "", "")
 	verbose := flag.Bool("V", false, "")
 
 	flag.Usage = func() {
 		_, _ = fmt.Fprintf(os.Stderr, `Usage of snmp: snmp [options] Oids...
-  -mode get/walk/trapsend (default is get/walk)
-  -c    string Default SNMP community (default "public")
-  -t    one or more SNMP targets (eg. -t 192.168.1.1 -t myCommunity@192.168.1.2:1234)
-  -x    one or more x vars (eg. -x 1-3)
-  -oids one or more Oids
-  -trap trap server listening address(eg. :9162)
-  -V    Verbose logging of packets
+  -mode  get/walk/trapsend (default is get/walk)
+  -c     string Default SNMP community (default "public")
+  -t     one or more SNMP targets (eg. -t 192.168.1.1 -t myCommunity@192.168.1.2:1234)
+  -x/y/z one or more x/y/z vars (eg. -x 1-3)
+  -oids  one or more Oids
+  -trap  trap server listening address(eg. :9162)
+  -V     Verbose logging of packets
 `)
 	}
 
 	flag.Parse()
 
 	o.Oids = append(o.Oids, flag.Args()...)
-	o.Oids = interpolate(o.Oids, expandNums(x))
+	o.Oids = interpolate(o.Oids, expandNums(x), "x")
+	o.Oids = interpolate(o.Oids, expandNums(y), "y")
+	o.Oids = interpolate(o.Oids, expandNums(z), "z")
 
 	if *verbose {
 		o.Logger = log.New(log.Writer(), log.Prefix(), log.Flags())
 	}
 }
 
-func interpolate(args []string, xs []string) []string {
+func interpolate(args []string, xs []string, xName string) []string {
 	vs := make([]string, 0)
 
 	for _, arg := range args {
-		if !strings.Contains(arg, ".x") {
+		if !strings.Contains(arg, "."+xName) {
 			vs = append(vs, arg)
 			continue
 		}
 
 		for _, x := range xs {
-			y := strings.ReplaceAll(arg, ".x", "."+x)
+			y := strings.ReplaceAll(arg, "."+xName, "."+x)
 			vs = append(vs, y)
 		}
 	}
