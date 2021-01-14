@@ -85,6 +85,9 @@ DISMAN-EVENT-MIB::sysUpTimeInstance
 
     * MIB：Management Information Base(管理信息库)，定义代理进程中所有可被查询和修改的参数。
     * SMI：Structure of Management Information(管理信息结构)，SMI定义了SNMP中使用到的ASN.1类型、语法，并定义了SNMP中使用到的类型、宏、符号等。SMI用于后续协议的描述和MIB的定义。每个版本的SNMP都可能定义自己的SMI。
+    * OID: 对象标识符（OID－Object Identifiers），是SNMP代理提供的具有唯一标识的键值，MIB（管理信息基）提供数字化OID到可读文本的映射。SNMP OID是用一种按照层次化格式组织的、树状结构中的唯一地址来表示的，它与DNS层次相似。
+        ![image](https://user-images.githubusercontent.com/1940588/104560584-0a639380-5681-11eb-8de8-a6f71b8788c9.png)
+
 
 1. [安装使用 SNMP](https://github.com/fenggolang/collect)
 
