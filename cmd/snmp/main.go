@@ -17,8 +17,10 @@ type Options struct {
 	Community string
 	Verbose   bool
 	Targets   arrayFlags
-	TrapAddr  string
-	Mode      string
+	oids      arrayFlags
+
+	TrapAddr string
+	Mode     string
 }
 
 type arrayFlags []string
@@ -30,32 +32,125 @@ func (i *arrayFlags) Set(value string) error {
 	return nil
 }
 
-func (o *Options) InitFlags() {
+func (o *Options) ParseFlags() {
+	var x arrayFlags
+
 	flag.StringVar(&o.Community, "c", "public", "")
 	flag.StringVar(&o.Mode, "mode", "get/walk", "")
 	flag.BoolVar(&o.Verbose, "V", false, "")
 	flag.Var(&o.Targets, "t", "")
+	flag.Var(&x, "x", "")
+	flag.Var(&o.oids, "oid", "")
 	flag.StringVar(&o.TrapAddr, "trap", "", "")
 
 	flag.Usage = func() {
-		_, _ = fmt.Fprintf(os.Stderr, `Usage of snmp:
+		_, _ = fmt.Fprintf(os.Stderr, `Usage of snmp: snmp [options] oids...
   -c    string Default SNMP community (default "public")
   -mode get/walk/trapsend (default is get/walk)
-  -t    value Default SNMP community
-  -trap trap server listening address, eg: :9162
+  -t    one or more SNMP targets (eg. -t 192.168.1.1 -t myCommunity@192.168.1.2:1234)
+  -x    one or more x vars (eg. -x 1-3)
+  -trap trap server listening address(eg. :9162)
   -V    Verbose logging of packets
 `)
+	}
+
+	flag.Parse()
+
+	o.oids = append(o.oids, flag.Args()...)
+	o.oids = interpolate(o.oids, expandNums(x))
+}
+
+func interpolate(args []string, xs []int) []string {
+	if len(xs) == 0 {
+		return args
+	}
+
+	vs := make([]string, 0)
+
+	for _, arg := range args {
+		for _, x := range xs {
+			y := strings.ReplaceAll(arg, "x", fmt.Sprintf("%d", x))
+			vs = append(vs, y)
+		}
+	}
+
+	return vs
+}
+
+type ExpandNums struct {
+	nums []int
+}
+
+func expandNums(x []string) []int {
+	ox := ExpandNums{nums: make([]int, 0)}
+	for _, xi := range x {
+		ox.expand(xi)
+	}
+
+	return ox.nums
+}
+
+func (ox *ExpandNums) expand(xi string) {
+	xii := strings.Split(xi, ",")
+	for _, xij := range xii {
+		xirange := strings.Split(xij, "-")
+		f, err := strconv.Atoi(xirange[0])
+		if err != nil {
+			log.Printf("W! error x values %v", err)
+			continue
+		}
+
+		ox.append(f)
+
+		xirange = xirange[1:]
+
+		if len(xirange) == 0 {
+			continue
+		}
+
+		ox.expandRange(f, xirange)
+	}
+}
+
+func (ox *ExpandNums) append(f int) {
+	for _, i := range ox.nums {
+		if i == f {
+			return
+		}
+	}
+
+	ox.nums = append(ox.nums, f)
+}
+
+func (ox *ExpandNums) expandRange(f int, to []string) {
+	t, err := strconv.Atoi(to[0])
+	if err != nil {
+		log.Printf("W! error x values %v", err)
+		return
+	}
+
+	to = to[1:]
+	step := 1
+	if len(to) > 0 {
+		v, err := strconv.Atoi(to[0])
+		if err != nil {
+			log.Printf("W! error x values %v", err)
+			return
+		}
+		step = v
+	}
+
+	for j := f + step; j <= t; j += step {
+		ox.append(j)
 	}
 }
 
 func main() {
 	options := Options{}
-	options.InitFlags()
-
-	flag.Parse()
+	options.ParseFlags()
 
 	for _, t := range options.Targets {
-		options.do(t, flag.Args())
+		options.do(t)
 	}
 
 	options.trap()
@@ -65,15 +160,14 @@ type Target struct {
 	*g.GoSNMP
 	*Options
 	target string
-	oids   []string
 }
 
 func (t *Target) Close() {
 	_ = t.Conn.Close()
 }
 
-func (o *Options) do(target string, oids []string) {
-	t := o.createTarget(target, oids)
+func (o *Options) do(target string) {
+	t := o.createTarget(target)
 	if err := t.Connect(); err != nil {
 		log.Printf("E! Connect() err: %v", err)
 		os.Exit(1)
@@ -110,7 +204,7 @@ func (t *Target) snmpGet() {
 
 	result, err := t.Get(t.oids) // Get() accepts up to g.MAX_OIDS
 	if err != nil {
-		log.Printf("W! snmpget error: %v", err)
+		log.Printf("W! snmpget %v error: %v", t.oids, err)
 		return
 	}
 
@@ -149,15 +243,15 @@ func (t *Target) trapSend() {
 }
 
 func printPdu(typ, target string, i int, pdu g.SnmpPDU) {
-	fmt.Printf("[%s][%s][%d] %s = ", typ, target, i, pdu.Name)
+	fmt.Printf("[%s][%s][%d] %s = %v: ", typ, target, i, pdu.Name, pdu.Type)
 
 	switch pdu.Type {
 	case g.OctetString:
-		fmt.Printf("%v: %s\n", pdu.Type, pdu.Value.([]byte))
+		fmt.Printf("%s\n", pdu.Value.([]byte))
 	case g.ObjectIdentifier:
-		fmt.Printf("%v: %s\n", pdu.Type, pdu.Value.(string))
+		fmt.Printf("%s\n", pdu.Value.(string))
 	default:
-		fmt.Printf("%v: %v\n", pdu.Type, pdu.Value)
+		fmt.Printf("%v\n", pdu.Value)
 	}
 }
 
@@ -165,15 +259,15 @@ const (
 	DefaultSnmpPort = 161
 )
 
-func (o *Options) createTarget(target string, oids []string) Target {
+func (o *Options) createTarget(target string) Target {
 	gs := &g.GoSNMP{
 		Port:               DefaultSnmpPort,
 		Transport:          "udp",
 		Community:          "public",
 		Version:            g.Version2c,
-		Timeout:            time.Duration(10) * time.Second,
-		Retries:            3,
-		ExponentialTimeout: true,
+		Timeout:            time.Duration(3) * time.Second,
+		Retries:            0,
+		ExponentialTimeout: false,
 		MaxOids:            g.MaxOids,
 	}
 
@@ -185,7 +279,6 @@ func (o *Options) createTarget(target string, oids []string) Target {
 	return Target{
 		GoSNMP:  gs,
 		target:  refinedTarget,
-		oids:    oids,
 		Options: o,
 	}
 }
