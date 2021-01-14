@@ -1,8 +1,8 @@
-$ snmp
+# snmp
 
 snmp package and tools in golang.
 
-#$ examples
+## examples
 
 uses the SNMP GET/BULKWALK request to query for information on a network entity
 
@@ -47,7 +47,7 @@ $ snmptranslate .1.3.6.1.2.1.1.3.0
 DISMAN-EVENT-MIB::sysUpTimeInstance
 ```
 
-#$ resources
+## resources
 
 1. [SNMP Trap - How To Send A Test Trap](https://support.nagios.com/kb/article.php?id=493)
 
