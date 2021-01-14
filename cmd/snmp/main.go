@@ -67,6 +67,7 @@ func interpolate(args []string, xs []int) []string {
 	for _, arg := range args {
 		if !strings.Contains(arg, "x") {
 			vs = append(vs, arg)
+			continue
 		}
 
 		for _, x := range xs {
