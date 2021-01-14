@@ -15,12 +15,12 @@ import (
 
 type Options struct {
 	Community string
-	Verbose   bool
 	Targets   arrayFlags
-	oids      arrayFlags
+	Oids      arrayFlags
 
 	TrapAddr string
 	Mode     string
+	Logger   *log.Logger
 }
 
 type arrayFlags []string
@@ -39,17 +39,17 @@ func (o *Options) ParseFlags() {
 	flag.StringVar(&o.Community, "c", "public", "")
 	flag.Var(&o.Targets, "t", "")
 	flag.Var(&x, "x", "")
-	flag.Var(&o.oids, "oid", "")
+	flag.Var(&o.Oids, "oid", "")
 	flag.StringVar(&o.TrapAddr, "trap", "", "")
-	flag.BoolVar(&o.Verbose, "V", false, "")
+	verbose := flag.Bool("V", false, "")
 
 	flag.Usage = func() {
-		_, _ = fmt.Fprintf(os.Stderr, `Usage of snmp: snmp [options] oids...
+		_, _ = fmt.Fprintf(os.Stderr, `Usage of snmp: snmp [options] Oids...
   -mode get/walk/trapsend (default is get/walk)
   -c    string Default SNMP community (default "public")
   -t    one or more SNMP targets (eg. -t 192.168.1.1 -t myCommunity@192.168.1.2:1234)
   -x    one or more x vars (eg. -x 1-3)
-  -oids one or more oids
+  -Oids one or more Oids
   -trap trap server listening address(eg. :9162)
   -V    Verbose logging of packets
 `)
@@ -57,8 +57,12 @@ func (o *Options) ParseFlags() {
 
 	flag.Parse()
 
-	o.oids = append(o.oids, flag.Args()...)
-	o.oids = interpolate(o.oids, expandNums(x))
+	o.Oids = append(o.Oids, flag.Args()...)
+	o.Oids = interpolate(o.Oids, expandNums(x))
+
+	if *verbose {
+		o.Logger = log.New(log.Writer(), log.Prefix(), log.Flags())
+	}
 }
 
 func interpolate(args []string, xs []int) []string {
@@ -187,7 +191,7 @@ func (t *Target) snmpWalk() {
 		return
 	}
 
-	for _, oid := range t.oids {
+	for _, oid := range t.Oids {
 		i := 0
 		if err := t.BulkWalk(oid, func(pdu g.SnmpPDU) error {
 			printPdu("walk", t.target, i, pdu)
@@ -204,9 +208,9 @@ func (t *Target) snmpGet() {
 		return
 	}
 
-	result, err := t.Get(t.oids) // Get() accepts up to g.MAX_OIDS
+	result, err := t.Get(t.Oids) // Get() accepts up to g.MAX_OIDS
 	if err != nil {
-		log.Printf("W! snmpget %v error: %v", t.oids, err)
+		log.Printf("W! snmpget %v error: %v", t.Oids, err)
 		return
 	}
 
@@ -258,14 +262,15 @@ func printPdu(typ, target string, i int, pdu g.SnmpPDU) {
 }
 
 const (
-	DefaultSnmpPort = 161
+	DefaultSnmpPort  = 161
+	DefaultCommunity = "public"
 )
 
 func (o *Options) createTarget(target string) Target {
 	gs := &g.GoSNMP{
 		Port:               DefaultSnmpPort,
 		Transport:          "udp",
-		Community:          "public",
+		Community:          DefaultCommunity,
 		Version:            g.Version2c,
 		Timeout:            time.Duration(3) * time.Second,
 		Retries:            0,
@@ -275,7 +280,7 @@ func (o *Options) createTarget(target string) Target {
 
 	o.setupVerbose(gs)
 	target = o.parseCommunity(target, gs)
-	o.parseTargetPort(target, gs)
+	parseTargetPort(target, gs)
 	refinedTarget := refineTargetForOutput(gs)
 
 	return Target{
@@ -286,11 +291,11 @@ func (o *Options) createTarget(target string) Target {
 }
 
 func (o *Options) setupVerbose(gs *g.GoSNMP) {
-	if !o.Verbose {
+	if o.Logger == nil {
 		return
 	}
 
-	gs.Logger = log.New(log.Writer(), log.Prefix(), log.Flags())
+	gs.Logger = o.Logger
 
 	// Function handles for collecting metrics on query latencies.
 	var sent time.Time
@@ -309,7 +314,7 @@ func (o *Options) parseCommunity(target string, gs *g.GoSNMP) string {
 	return target
 }
 
-func (o *Options) parseTargetPort(target string, gs *g.GoSNMP) {
+func parseTargetPort(target string, gs *g.GoSNMP) {
 	if p := strings.LastIndex(target, ":"); p < 0 {
 		gs.Target = target
 	} else {
@@ -330,19 +335,16 @@ func (o *Options) trap() {
 	tl := g.NewTrapListener()
 	tl.OnNewTrap = trapHandler
 	tl.Params = g.Default
-
-	if o.Verbose {
-		tl.Params.Logger = log.New(log.Writer(), log.Prefix(), log.Flags())
-	}
+	tl.Params.Logger = o.Logger
 
 	if err := tl.Listen(o.TrapAddr); err != nil {
 		log.Printf("E! error in listen: %s", err)
 	}
 }
 
-func trapHandler(packet *g.SnmpPacket, addr *net.UDPAddr) {
+func trapHandler(p *g.SnmpPacket, addr *net.UDPAddr) {
 	log.Printf("got trapdata from %s", addr.IP)
-	for i, v := range packet.Variables {
+	for i, v := range p.Variables {
 		printPdu("trap", addr.String(), i, v)
 	}
 }
@@ -350,7 +352,7 @@ func trapHandler(packet *g.SnmpPacket, addr *net.UDPAddr) {
 func refineTargetForOutput(gs *g.GoSNMP) string {
 	target := ""
 
-	if gs.Community != "public" {
+	if gs.Community != DefaultCommunity {
 		target = gs.Community + "@"
 	}
 
