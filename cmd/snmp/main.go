@@ -4,6 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"log"
+	"os"
 	"strconv"
 	"strings"
 	"time"
@@ -27,9 +28,17 @@ func (i *arrayFlags) Set(value string) error {
 }
 
 func (o *Options) InitFlags() {
-	flag.StringVar(&o.Community, "c", "public", "Default SNMP community")
-	flag.BoolVar(&o.Verbose, "V", false, "Do verbose logging of packets")
-	flag.Var(&o.Targets, "t", "Default SNMP community")
+	flag.StringVar(&o.Community, "c", "public", "")
+	flag.BoolVar(&o.Verbose, "V", false, "")
+	flag.Var(&o.Targets, "t", "")
+
+	flag.Usage = func() {
+		fmt.Fprintf(os.Stderr, `Usage of snmp:
+  -c string Default SNMP community (default "public")
+  -t value Default SNMP community
+  -V Verbose logging of packets
+`)
+	}
 }
 
 func main() {
