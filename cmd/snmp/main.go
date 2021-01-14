@@ -43,51 +43,52 @@ func main() {
 	}
 }
 
-func (o *Options) do(target string, oids []string) {
-	target, gs, err := o.createSnmp(target)
-	if err != nil {
-		log.Printf("W! failed to create snmp error: %v", err)
-		return
-	}
+type Target struct {
+	*g.GoSNMP
+	target string
+	oids   []string
+}
 
-	if err := gs.Connect(); err != nil {
+func (t *Target) Close() {
+	_ = t.Conn.Close()
+}
+
+func (o *Options) do(target string, oids []string) {
+	t := o.createTarget(target, oids)
+	if err := t.Connect(); err != nil {
 		log.Printf("E! Connect() err: %v", err)
 		return
 	}
 
-	defer gs.Conn.Close()
+	defer t.Close()
 
-	if err := snmpGet(gs, target, oids); err != nil {
-		log.Printf("W! snmpget error: %v", err)
-	}
-
-	snmpWalk(gs, target, oids)
+	t.snmpGet()
+	t.snmpWalk()
 }
 
-func snmpWalk(gs *g.GoSNMP, target string, oids []string) {
-	for _, oid := range oids {
+func (t *Target) snmpWalk() {
+	for _, oid := range t.oids {
 		i := 0
-		if err := gs.BulkWalk(oid, func(pdu g.SnmpPDU) error {
-			printPdu("walk", target, i, pdu)
+		if err := t.BulkWalk(oid, func(pdu g.SnmpPDU) error {
+			printPdu("walk", t.target, i, pdu)
 			i++
 			return nil
 		}); err != nil {
-			log.Printf("W! snmpget walk: %v", err)
+			log.Printf("W! snmpwalk error: %v", err)
 		}
 	}
 }
 
-func snmpGet(gs *g.GoSNMP, target string, oids []string) error {
-	result, err := gs.Get(oids) // Get() accepts up to g.MAX_OIDS
+func (t *Target) snmpGet() {
+	result, err := t.Get(t.oids) // Get() accepts up to g.MAX_OIDS
 	if err != nil {
-		return err
+		log.Printf("W! snmpget error: %v", err)
+		return
 	}
 
 	for i, pdu := range result.Variables {
-		printPdu(" get", target, i, pdu)
+		printPdu(" get", t.target, i, pdu)
 	}
-
-	return nil
 }
 
 func printPdu(typ, target string, i int, pdu g.SnmpPDU) {
@@ -108,8 +109,8 @@ const (
 	DefaultSnmpPort = 161
 )
 
-func (o *Options) createSnmp(target string) (refinedTarget string, gs *g.GoSNMP, err error) {
-	gs = &g.GoSNMP{
+func (o *Options) createTarget(target string, oids []string) Target {
+	gs := &g.GoSNMP{
 		Port:               DefaultSnmpPort,
 		Transport:          "udp",
 		Community:          "public",
@@ -123,9 +124,13 @@ func (o *Options) createSnmp(target string) (refinedTarget string, gs *g.GoSNMP,
 	o.setupVerbose(gs)
 	target = o.parseCommunity(target, gs)
 	o.parseTargetPort(target, gs)
-	refinedTarget = refineTargetForOutput(gs)
+	refinedTarget := refineTargetForOutput(gs)
 
-	return
+	return Target{
+		GoSNMP: gs,
+		target: refinedTarget,
+		oids:   oids,
+	}
 }
 
 func (o *Options) setupVerbose(gs *g.GoSNMP) {
