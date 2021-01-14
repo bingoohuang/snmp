@@ -16,9 +16,9 @@ import (
 type Options struct {
 	Community string
 	Verbose   bool
-	TrapSend  bool
 	Targets   arrayFlags
 	TrapAddr  string
+	Mode      string
 }
 
 type arrayFlags []string
@@ -32,16 +32,16 @@ func (i *arrayFlags) Set(value string) error {
 
 func (o *Options) InitFlags() {
 	flag.StringVar(&o.Community, "c", "public", "")
+	flag.StringVar(&o.Mode, "mode", "get/walk", "")
 	flag.BoolVar(&o.Verbose, "V", false, "")
-	flag.BoolVar(&o.TrapSend, "T", false, "")
 	flag.Var(&o.Targets, "t", "")
 	flag.StringVar(&o.TrapAddr, "trap", "", "")
 
 	flag.Usage = func() {
 		_, _ = fmt.Fprintf(os.Stderr, `Usage of snmp:
   -c    string Default SNMP community (default "public")
+  -mode get/walk/trapsend (default is get/walk)
   -t    value Default SNMP community
-  -T    send trap values
   -trap trap server listening address, eg: :9162
   -V    Verbose logging of packets
 `)
@@ -87,6 +87,10 @@ func (o *Options) do(target string, oids []string) {
 }
 
 func (t *Target) snmpWalk() {
+	if !strings.Contains(t.Mode, "walk") {
+		return
+	}
+
 	for _, oid := range t.oids {
 		i := 0
 		if err := t.BulkWalk(oid, func(pdu g.SnmpPDU) error {
@@ -100,6 +104,10 @@ func (t *Target) snmpWalk() {
 }
 
 func (t *Target) snmpGet() {
+	if !strings.Contains(t.Mode, "get") {
+		return
+	}
+
 	result, err := t.Get(t.oids) // Get() accepts up to g.MAX_OIDS
 	if err != nil {
 		log.Printf("W! snmpget error: %v", err)
@@ -107,12 +115,12 @@ func (t *Target) snmpGet() {
 	}
 
 	for i, pdu := range result.Variables {
-		printPdu(" get", t.target, i, pdu)
+		printPdu("get", t.target, i, pdu)
 	}
 }
 
 func (t *Target) trapSend() {
-	if !t.TrapSend {
+	if !strings.Contains(t.Mode, "trapsend") {
 		return
 	}
 
