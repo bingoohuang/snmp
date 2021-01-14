@@ -65,7 +65,7 @@ func (o *Options) ParseFlags() {
 	}
 }
 
-func interpolate(args []string, xs []int) []string {
+func interpolate(args []string, xs []string) []string {
 	vs := make([]string, 0)
 
 	for _, arg := range args {
@@ -75,7 +75,7 @@ func interpolate(args []string, xs []int) []string {
 		}
 
 		for _, x := range xs {
-			y := strings.ReplaceAll(arg, ".x", fmt.Sprintf(".%d", x))
+			y := strings.ReplaceAll(arg, ".x", "."+x)
 			vs = append(vs, y)
 		}
 	}
@@ -84,11 +84,11 @@ func interpolate(args []string, xs []int) []string {
 }
 
 type ExpandNums struct {
-	nums []int
+	nums []string
 }
 
-func expandNums(x []string) []int {
-	ox := ExpandNums{nums: make([]int, 0)}
+func expandNums(x []string) []string {
+	ox := ExpandNums{nums: make([]string, 0)}
 	for _, xi := range x {
 		ox.expand(xi)
 	}
@@ -99,6 +99,11 @@ func expandNums(x []string) []int {
 func (ox *ExpandNums) expand(xi string) {
 	xii := strings.Split(xi, ",")
 	for _, xij := range xii {
+		if !strings.Contains(xij, "-") {
+			ox.append(xij)
+			continue
+		}
+
 		xirange := strings.Split(xij, "-")
 		f, err := strconv.Atoi(xirange[0])
 		if err != nil {
@@ -106,10 +111,9 @@ func (ox *ExpandNums) expand(xi string) {
 			continue
 		}
 
-		ox.append(f)
+		ox.append(xirange[0])
 
 		xirange = xirange[1:]
-
 		if len(xirange) == 0 {
 			continue
 		}
@@ -118,7 +122,7 @@ func (ox *ExpandNums) expand(xi string) {
 	}
 }
 
-func (ox *ExpandNums) append(f int) {
+func (ox *ExpandNums) append(f string) {
 	for _, i := range ox.nums {
 		if i == f {
 			return
@@ -147,7 +151,7 @@ func (ox *ExpandNums) expandRange(f int, to []string) {
 	}
 
 	for j := f + step; j <= t; j += step {
-		ox.append(j)
+		ox.append(fmt.Sprintf("%d", j))
 	}
 }
 
