@@ -60,7 +60,18 @@ func (o *Options) do(target string, oids []string) {
 	defer gs.Conn.Close()
 
 	if err := snmpGet(target, gs, oids); err != nil {
-		log.Printf("E! Get() err: %v", err)
+		log.Printf("W! snmpget error: %v", err)
+	}
+
+	for _, oid := range oids {
+		i := 0
+		if err := gs.BulkWalk(oid, func(pdu g.SnmpPDU) error {
+			printPdu("walk", target, i, pdu)
+			i++
+			return nil
+		}); err != nil {
+			log.Printf("W! snmpget walk: %v", err)
+		}
 	}
 }
 
@@ -70,21 +81,25 @@ func snmpGet(target string, gs *g.GoSNMP, oids []string) error {
 		return err
 	}
 
-	for i, v := range result.Variables {
-		fmt.Printf("[%s] [%d] %s = ", target, i, v.Name)
-
-		switch v.Type {
-		case g.OctetString:
-			fmt.Printf("string: %s\n", v.Value.([]byte))
-		default:
-			// ... or often you're just interested in numeric values.
-			// ToBigInt() will return the Value as a BigInt, for plugging
-			// into your calculations.
-			fmt.Printf("number: %d\n", g.ToBigInt(v.Value))
-		}
+	for i, pdu := range result.Variables {
+		printPdu(" get", target, i, pdu)
 	}
 
 	return nil
+}
+
+func printPdu(typ, target string, i int, pdu g.SnmpPDU) {
+	fmt.Printf("[%s][%s][%d] %s = ", typ, target, i, pdu.Name)
+
+	switch pdu.Type {
+	case g.OctetString:
+		fmt.Printf("string: %s\n", pdu.Value.([]byte))
+	default:
+		// ... or often you're just interested in numeric values.
+		// ToBigInt() will return the Value as a BigInt, for plugging
+		// into your calculations.
+		fmt.Printf("number: %d\n", g.ToBigInt(pdu.Value))
+	}
 }
 
 const (
@@ -97,7 +112,7 @@ func (o *Options) createSnmp(target string) (refinedTarget string, gs *g.GoSNMP,
 		Transport:          "udp",
 		Community:          "public",
 		Version:            g.Version2c,
-		Timeout:            time.Duration(2) * time.Second,
+		Timeout:            time.Duration(10) * time.Second,
 		Retries:            3,
 		ExponentialTimeout: true,
 		MaxOids:            g.MaxOids,
