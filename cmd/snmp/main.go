@@ -35,18 +35,18 @@ func (i *arrayFlags) Set(value string) error {
 func (o *Options) ParseFlags() {
 	var x arrayFlags
 
-	flag.StringVar(&o.Community, "c", "public", "")
 	flag.StringVar(&o.Mode, "mode", "get/walk", "")
-	flag.BoolVar(&o.Verbose, "V", false, "")
+	flag.StringVar(&o.Community, "c", "public", "")
 	flag.Var(&o.Targets, "t", "")
 	flag.Var(&x, "x", "")
 	flag.Var(&o.oids, "oid", "")
 	flag.StringVar(&o.TrapAddr, "trap", "", "")
+	flag.BoolVar(&o.Verbose, "V", false, "")
 
 	flag.Usage = func() {
 		_, _ = fmt.Fprintf(os.Stderr, `Usage of snmp: snmp [options] oids...
-  -c    string Default SNMP community (default "public")
   -mode get/walk/trapsend (default is get/walk)
+  -c    string Default SNMP community (default "public")
   -t    one or more SNMP targets (eg. -t 192.168.1.1 -t myCommunity@192.168.1.2:1234)
   -x    one or more x vars (eg. -x 1-3)
   -oids one or more oids
