@@ -19,9 +19,7 @@ type Options struct {
 
 type arrayFlags []string
 
-func (i *arrayFlags) String() string {
-	return "my string representation"
-}
+func (i *arrayFlags) String() string { return "my string representation" }
 
 func (i *arrayFlags) Set(value string) error {
 	*i = append(*i, value)
@@ -59,10 +57,14 @@ func (o *Options) do(target string, oids []string) {
 
 	defer gs.Conn.Close()
 
-	if err := snmpGet(target, gs, oids); err != nil {
+	if err := snmpGet(gs, target, oids); err != nil {
 		log.Printf("W! snmpget error: %v", err)
 	}
 
+	snmpWalk(gs, target, oids)
+}
+
+func snmpWalk(gs *g.GoSNMP, target string, oids []string) {
 	for _, oid := range oids {
 		i := 0
 		if err := gs.BulkWalk(oid, func(pdu g.SnmpPDU) error {
@@ -75,7 +77,7 @@ func (o *Options) do(target string, oids []string) {
 	}
 }
 
-func snmpGet(target string, gs *g.GoSNMP, oids []string) error {
+func snmpGet(gs *g.GoSNMP, target string, oids []string) error {
 	result, err := gs.Get(oids) // Get() accepts up to g.MAX_OIDS
 	if err != nil {
 		return err
@@ -118,15 +120,28 @@ func (o *Options) createSnmp(target string) (refinedTarget string, gs *g.GoSNMP,
 		MaxOids:            g.MaxOids,
 	}
 
-	if o.Verbose {
-		gs.Logger = log.New(log.Writer(), log.Prefix(), log.Flags())
+	o.setupVerbose(gs)
+	target = o.parseCommunity(target, gs)
+	o.parseTargetPort(target, gs)
+	refinedTarget = refineTargetForOutput(gs)
 
-		// Function handles for collecting metrics on query latencies.
-		var sent time.Time
-		gs.OnSent = func(*g.GoSNMP) { sent = time.Now() }
-		gs.OnRecv = func(*g.GoSNMP) { log.Printf("Query latency: %s", time.Since(sent)) }
+	return
+}
+
+func (o *Options) setupVerbose(gs *g.GoSNMP) {
+	if !o.Verbose {
+		return
 	}
 
+	gs.Logger = log.New(log.Writer(), log.Prefix(), log.Flags())
+
+	// Function handles for collecting metrics on query latencies.
+	var sent time.Time
+	gs.OnSent = func(*g.GoSNMP) { sent = time.Now() }
+	gs.OnRecv = func(*g.GoSNMP) { log.Printf("Query latency: %s", time.Since(sent)) }
+}
+
+func (o *Options) parseCommunity(target string, gs *g.GoSNMP) string {
 	if p := strings.LastIndex(target, "@"); p < 0 {
 		gs.Community = o.Community
 	} else {
@@ -134,6 +149,10 @@ func (o *Options) createSnmp(target string) (refinedTarget string, gs *g.GoSNMP,
 		target = target[p+1:]
 	}
 
+	return target
+}
+
+func (o *Options) parseTargetPort(target string, gs *g.GoSNMP) {
 	if p := strings.LastIndex(target, ":"); p < 0 {
 		gs.Target = target
 	} else {
@@ -144,15 +163,18 @@ func (o *Options) createSnmp(target string) (refinedTarget string, gs *g.GoSNMP,
 		}
 		gs.Port = uint16(port)
 	}
+}
+
+func refineTargetForOutput(gs *g.GoSNMP) string {
+	target := ""
 
 	if gs.Community != "public" {
-		refinedTarget = gs.Community + "@"
+		target = gs.Community + "@"
 	}
 
-	refinedTarget += gs.Target
+	target += gs.Target
 	if gs.Port != DefaultSnmpPort {
-		refinedTarget += fmt.Sprintf(":%d", gs.Port)
+		target += fmt.Sprintf(":%d", gs.Port)
 	}
-
-	return
+	return target
 }
