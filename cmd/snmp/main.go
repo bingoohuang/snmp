@@ -36,7 +36,7 @@ func (o *Options) InitFlags() {
 	flag.StringVar(&o.TrapAddr, "trap", "", "")
 
 	flag.Usage = func() {
-		fmt.Fprintf(os.Stderr, `Usage of snmp:
+		_, _ = fmt.Fprintf(os.Stderr, `Usage of snmp:
   -c    string Default SNMP community (default "public")
   -t    value Default SNMP community
   -trap trap server listening address, eg: :9162
@@ -51,11 +51,11 @@ func main() {
 
 	flag.Parse()
 
-	options.trap()
-
 	for _, t := range options.Targets {
 		options.do(t, flag.Args())
 	}
+
+	options.trap()
 }
 
 type Target struct {
@@ -198,23 +198,15 @@ func (o *Options) trap() {
 		tl.Params.Logger = log.New(log.Writer(), log.Prefix(), log.Flags())
 	}
 
-	go func() {
-		if err := tl.Listen(o.TrapAddr); err != nil {
-			log.Printf("E! error in listen: %s", err)
-		}
-	}()
+	if err := tl.Listen(o.TrapAddr); err != nil {
+		log.Printf("E! error in listen: %s", err)
+	}
 }
 
 func trapHandler(packet *g.SnmpPacket, addr *net.UDPAddr) {
 	log.Printf("got trapdata from %s", addr.IP)
-	for _, v := range packet.Variables {
-		switch v.Type {
-		case g.OctetString:
-			b := v.Value.([]byte)
-			fmt.Printf("OID: %s, string: %x", v.Name, b)
-		default:
-			fmt.Printf("trap: %+v", v)
-		}
+	for i, v := range packet.Variables {
+		printPdu(" trap", addr.String(), i, v)
 	}
 }
 
