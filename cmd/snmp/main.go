@@ -49,7 +49,7 @@ func (o *Options) ParseFlags() {
   -c    string Default SNMP community (default "public")
   -t    one or more SNMP targets (eg. -t 192.168.1.1 -t myCommunity@192.168.1.2:1234)
   -x    one or more x vars (eg. -x 1-3)
-  -Oids one or more Oids
+  -oids one or more Oids
   -trap trap server listening address(eg. :9162)
   -V    Verbose logging of packets
 `)
