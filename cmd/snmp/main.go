@@ -62,13 +62,13 @@ func (o *Options) ParseFlags() {
 }
 
 func interpolate(args []string, xs []int) []string {
-	if len(xs) == 0 {
-		return args
-	}
-
 	vs := make([]string, 0)
 
 	for _, arg := range args {
+		if !strings.Contains(arg, "x") {
+			vs = append(vs, arg)
+		}
+
 		for _, x := range xs {
 			y := strings.ReplaceAll(arg, "x", fmt.Sprintf("%d", x))
 			vs = append(vs, y)
