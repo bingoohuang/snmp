@@ -174,29 +174,29 @@ DISMAN-EVENT-MIB::sysUpTimeInstance
 
     | CPU及负载 OID              | 描述                           | 备注              | 请求方式 |
     |----------------------------|--------------------------------|-------------------|----------|
-    | . 1.3.6.1.4.1.2021.11.9.0  | 用户CPU百分比                  | ssCpuUser         | GET      |
-    | . 1.3.6.1.4.1.2021.11.10.0 | 系统CPU百分比                  | ssCpuSystem       | GET      |
-    | . 1.3.6.1.4.1.2021.11.11.0 | 空闲CPU百分比                  | ssCpuIdle         | GET      |
-    | . 1.3.6.1.4.1.2021.11.50.0 | 原始用户CPU使用时间            | ssCpuRawUser      | GET      |
+    | .1.3.6.1.4.1.2021.11.9.0  | 用户CPU百分比                  | ssCpuUser         | GET      |
+    | .1.3.6.1.4.1.2021.11.10.0 | 系统CPU百分比                  | ssCpuSystem       | GET      |
+    | .1.3.6.1.4.1.2021.11.11.0 | 空闲CPU百分比                  | ssCpuIdle         | GET      |
+    | .1.3.6.1.4.1.2021.11.50.0 | 原始用户CPU使用时间            | ssCpuRawUser      | GET      |
     | .1.3.6.1.4.1.2021.11.51.0  | 原始nice占用时间               | ssCpuRawNice      | GET      |
-    | . 1.3.6.1.4.1.2021.11.52.0 | 原始系统CPU使用时间            | ssCpuRawSystem.   | GET      |
-    | . 1.3.6.1.4.1.2021.11.53.0 | 原始CPU空闲时间                | ssCpuRawIdle      | GET      |
-    | . 1.3.6.1.2.1.25.3.3.1.2   | CPU的当前负载，N个核就有N个负载 | hrProcessorLoad   | WALK     |
-    | . 1.3.6.1.4.1.2021.11.3.0  | -                              | ssSwapIn          | GET      |
-    | . 1.3.6.1.4.1.2021.11.4.0  | -                              | SsSwapOut         | GET      |
-    | . 1.3.6.1.4.1.2021.11.5.0  | -                              | ssIOSent          | GET      |
-    | . 1.3.6.1.4.1.2021.11.6.0  | -                              | ssIOReceive       | GET      |
-    | . 1.3.6.1.4.1.2021.11.7.0  | -                              | ssSysInterrupts   | GET      |
-    | . 1.3.6.1.4.1.2021.11.8.0  | -                              | ssSysContext      | GET      |
-    | . 1.3.6.1.4.1.2021.11.54.0 | -                              | ssCpuRawWait      | GET      |
-    | . 1.3.6.1.4.1.2021.11.56.0 | -                              | ssCpuRawInterrupt | GET      |
-    | . 1.3.6.1.4.1.2021.11.57.0 | -                              | ssIORawSent       | GET      |
-    | . 1.3.6.1.4.1.2021.11.58.0 | -                              | ssIORawReceived   | GET      |
-    | . 1.3.6.1.4.1.2021.11.59.0 | -                              | ssRawInterrupts   | GET      |
-    | . 1.3.6.1.4.1.2021.11.60.0 | -                              | ssRawContexts     | GET      |
-    | . 1.3.6.1.4.1.2021.11.61.0 | -                              | ssCpuRawSoftIRQ   | GET      |
-    | . 1.3.6.1.4.1.2021.11.62.0 | -                              | ssRawSwapIn.      | GET      |
-    | . 1.3.6.1.4.1.2021.11.63.0 | -                              | ssRawSwapOut      | GET      |
+    | .1.3.6.1.4.1.2021.11.52.0 | 原始系统CPU使用时间            | ssCpuRawSystem.   | GET      |
+    | .1.3.6.1.4.1.2021.11.53.0 | 原始CPU空闲时间                | ssCpuRawIdle      | GET      |
+    | .1.3.6.1.2.1.25.3.3.1.2   | CPU的当前负载，N个核就有N个负载 | hrProcessorLoad   | WALK     |
+    | .1.3.6.1.4.1.2021.11.3.0  | -                              | ssSwapIn          | GET      |
+    | .1.3.6.1.4.1.2021.11.4.0  | -                              | SsSwapOut         | GET      |
+    | .1.3.6.1.4.1.2021.11.5.0  | -                              | ssIOSent          | GET      |
+    | .1.3.6.1.4.1.2021.11.6.0  | -                              | ssIOReceive       | GET      |
+    | .1.3.6.1.4.1.2021.11.7.0  | -                              | ssSysInterrupts   | GET      |
+    | .1.3.6.1.4.1.2021.11.8.0  | -                              | ssSysContext      | GET      |
+    | .1.3.6.1.4.1.2021.11.54.0 | -                              | ssCpuRawWait      | GET      |
+    | .1.3.6.1.4.1.2021.11.56.0 | -                              | ssCpuRawInterrupt | GET      |
+    | .1.3.6.1.4.1.2021.11.57.0 | -                              | ssIORawSent       | GET      |
+    | .1.3.6.1.4.1.2021.11.58.0 | -                              | ssIORawReceived   | GET      |
+    | .1.3.6.1.4.1.2021.11.59.0 | -                              | ssRawInterrupts   | GET      |
+    | .1.3.6.1.4.1.2021.11.60.0 | -                              | ssRawContexts     | GET      |
+    | .1.3.6.1.4.1.2021.11.61.0 | -                              | ssCpuRawSoftIRQ   | GET      |
+    | .1.3.6.1.4.1.2021.11.62.0 | -                              | ssRawSwapIn.      | GET      |
+    | .1.3.6.1.4.1.2021.11.63.0 | -                              | ssRawSwapOut      | GET      |
     | .1.3.6.1.4.1.2021.10.1.3.1 | -                              | Load5             | GET      |
     | .1.3.6.1.4.1.2021.10.1.3.2 | -                              | Load10            | GET      |
     | .1.3.6.1.4.1.2021.10.1.3.3 | -                              | Load15            | GET      |
