@@ -65,9 +65,9 @@ func ModuleName(filename string) (string, error) {
 	r := bufio.NewReader(file)
 	lex := NewLexer(r)
 	lval := smiSymType{}
-	tok := lex.Lex(&lval)
+	lex.Lex(&lval)
 	moduleName := lval.id
-	tok = lex.Lex(&lval)
+	tok := lex.Lex(&lval)
 	if tok == tDEFINITIONS {
 		return moduleName, nil
 	}

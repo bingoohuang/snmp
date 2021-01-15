@@ -12,7 +12,6 @@ import (
 	"math"
 	"strconv"
 	"strings"
-	"unicode"
 )
 
 const (
@@ -244,10 +243,6 @@ func isBinaryDigitByte(b byte) bool {
 	return b == '0' || b == '1'
 }
 
-func isLowerByte(b byte) bool {
-	return b <= unicode.MaxASCII && unicode.IsLower(rune(b))
-}
-
 func isIdentByte(b2 []byte) bool {
 	return isLetterByte(b2[0]) || isDigitByte(b2[0]) ||
 		(b2[0] == '-' && (isLetterByte(b2[1]) || isDigitByte(b2[1])))
@@ -373,9 +368,7 @@ func (lex *Lexer) consumeUnsigned(lval *smiSymType) int {
 		lex.err = err
 		return lexEOF
 	}
-	if i < 0 {
-		panic("expected positive number")
-	}
+
 	if i <= uint64(math.MaxUint32) {
 		lval.unsigned32 = uint32(i)
 		return tNUMBER

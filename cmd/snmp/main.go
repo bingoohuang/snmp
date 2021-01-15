@@ -17,6 +17,18 @@ import (
 	g "github.com/gosnmp/gosnmp"
 )
 
+func main() {
+	options := Options{}
+	options.ParseFlags()
+
+	for _, t := range options.Targets {
+		options.do(t)
+	}
+
+	options.translate()
+	options.trap()
+}
+
 type Options struct {
 	Community string
 	Targets   arrayFlags
@@ -40,46 +52,60 @@ func (i *arrayFlags) Set(value string) error {
 func (o *Options) ParseFlags() {
 	var x, y, z arrayFlags
 
-	flag.StringVar(&o.Mode, "mode", "get/walk", "")
+	flag.StringVar(&o.Mode, "m", "get/walk", "")
 	flag.StringVar(&o.Community, "c", "public", "")
 	flag.Var(&o.Targets, "t", "")
 	flag.Var(&x, "x", "")
 	flag.Var(&y, "y", "")
 	flag.Var(&z, "z", "")
 	flag.Var(&o.Oids, "oid", "")
-	flag.StringVar(&o.TrapAddr, "trap", "", "")
+	flag.StringVar(&o.TrapAddr, "s", "", "")
 	verbose := flag.Bool("V", false, "")
 
 	flag.Usage = func() {
 		_, _ = fmt.Fprintf(os.Stderr, `Usage of snmp: snmp [options] Oids...
-  -mode  get/walk/trapsend (default is get/walk)
+  -m     get/walk/trapsend/translate (default is get/walk)
   -c     string Default SNMP community (default "public")
   -t     one or more SNMP targets (eg. -t 192.168.1.1 -t myCommunity@192.168.1.2:1234)
   -x/y/z one or more x/y/z vars (eg. -x 1-3)
-  -oids  one or more Oids
-  -trap  trap server listening address(eg. :9162)
+  -oid   one or more Oids
+  -s     trap server listening address(eg. :9162)
   -V     Verbose logging of packets
 `)
 	}
 
 	flag.Parse()
 
+	o.mib = LoadMibs()
 	o.Oids = append(o.Oids, flag.Args()...)
-	o.Oids = interpolate(o.Oids, expandNums(x), "x")
-	o.Oids = interpolate(o.Oids, expandNums(y), "y")
-	o.Oids = interpolate(o.Oids, expandNums(z), "z")
+	isTranslate := o.Mode == "translate"
+	o.Oids = interpolate(isTranslate, o.mib, o.Oids, expandNums(x), "x")
+	o.Oids = interpolate(isTranslate, o.mib, o.Oids, expandNums(y), "y")
+	o.Oids = interpolate(isTranslate, o.mib, o.Oids, expandNums(z), "z")
 
 	if *verbose {
 		o.Logger = log.New(log.Writer(), log.Prefix(), log.Flags())
 	}
-
-	o.mib = LoadMibs()
 }
 
-func interpolate(args []string, xs []string, xName string) []string {
+func interpolate(isTranslate bool, mib *smi.MIB, args []string, xs []string, xName string) []string {
 	vs := make([]string, 0)
 
 	for _, arg := range args {
+		if IsSymbolName(arg) {
+			if isTranslate {
+				vs = append(vs, arg)
+			} else {
+				oid, err := mib.OID(arg)
+				if err != nil {
+					log.Printf("unkown symbol %s", arg)
+					continue
+				}
+				vs = append(vs, oid.String())
+			}
+
+			continue
+		}
 		if !strings.Contains(arg, "."+xName) {
 			vs = append(vs, arg)
 			continue
@@ -166,17 +192,6 @@ func (ox *ExpandNums) expandRange(f int, to []string) {
 	}
 }
 
-func main() {
-	options := Options{}
-	options.ParseFlags()
-
-	for _, t := range options.Targets {
-		options.do(t)
-	}
-
-	options.trap()
-}
-
 type Target struct {
 	*g.GoSNMP
 	*Options
@@ -258,6 +273,40 @@ func (t *Target) trapSend() {
 	if _, err := t.SendTrap(trap); err != nil {
 		log.Printf("E! SendTrap() err: %v", err)
 		os.Exit(1)
+	}
+
+	os.Exit(0)
+}
+
+func (o *Options) translate() {
+	if !strings.Contains(o.Mode, "translate") {
+		return
+	}
+
+	for _, v := range o.Oids {
+		if IsSymbolName(v) {
+			if oid, err := o.mib.OID(v); err != nil {
+				fmt.Printf("%s => error %v\n", v, err)
+			} else {
+				fmt.Printf("%s => %s\n", v, oid)
+			}
+		} else {
+			oid, err := smi.ParseOID(v)
+			if err != nil {
+				fmt.Printf("%s => error %v\n", v, err)
+				continue
+			}
+
+			if symbol, suffix := o.mib.Symbol(oid); symbol == nil {
+				fmt.Printf("%s => unknown\n", v)
+			} else {
+				if len(suffix) > 0 {
+					fmt.Printf("%s => %s.%s\n", v, symbol, suffix.String())
+				} else {
+					fmt.Printf("%s => %s\n", v, symbol)
+				}
+			}
+		}
 	}
 
 	os.Exit(0)
@@ -422,4 +471,8 @@ func ParseOIDSymbolName(dotOid string, mib *smi.MIB) string {
 		return symbol.String()
 	}
 	return dotOid
+}
+
+func IsSymbolName(oid string) bool {
+	return strings.Contains(oid, "::")
 }
