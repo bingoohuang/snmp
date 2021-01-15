@@ -92,21 +92,16 @@ func interpolate(isTranslate bool, mib *smi.MIB, args []string, xs []string, xNa
 	vs := make([]string, 0)
 
 	for _, arg := range args {
-		if IsSymbolName(arg) {
-			if isTranslate {
-				vs = append(vs, arg)
-			} else {
-				oid, err := mib.OID(arg)
-				if err != nil {
-					log.Printf("unkown symbol %s", arg)
-					continue
-				}
-				vs = append(vs, oid.String())
+		if IsSymbolName(arg) && !isTranslate {
+			oid, err := mib.OID(arg)
+			if err != nil {
+				log.Printf("unkown symbol %s", arg)
+				continue
 			}
-
-			continue
+			vs = append(vs, oid.String())
 		}
-		if !strings.Contains(arg, "."+xName) {
+
+		if IsSymbolName(arg) || !strings.Contains(arg, "."+xName) {
 			vs = append(vs, arg)
 			continue
 		}
@@ -300,11 +295,7 @@ func (o *Options) translate() {
 			if symbol, suffix := o.mib.Symbol(oid); symbol == nil {
 				fmt.Printf("%s => unknown\n", v)
 			} else {
-				if len(suffix) > 0 {
-					fmt.Printf("%s => %s.%s\n", v, symbol, suffix.String())
-				} else {
-					fmt.Printf("%s => %s\n", v, symbol)
-				}
+				fmt.Printf("%s => %s\n", v, SymbolString(symbol, suffix))
 			}
 		}
 	}
@@ -312,9 +303,30 @@ func (o *Options) translate() {
 	os.Exit(0)
 }
 
+func SymbolString(symbol *smi.Symbol, suffix smi.OID) string {
+	if len(suffix) == 0 {
+		return fmt.Sprintf("%s", symbol)
+	}
+
+	return fmt.Sprintf("%s.%s", symbol, suffix.String())
+}
+
 func (o *Options) printPdu(typ, target string, i int, pdu g.SnmpPDU) {
 	symbol := ParseOIDSymbolName(pdu.Name, o.mib)
-	fmt.Printf("[%s][%s][%d][%s][%s] = %v: ", typ, target, i, symbol, pdu.Name, pdu.Type)
+
+	if o.Mode != typ {
+		typ = "[" + typ + "]"
+	} else {
+		typ = ""
+	}
+
+	if len(o.Targets) > 1 {
+		target = "[" + target + "]"
+	} else {
+		target = ""
+	}
+
+	fmt.Printf("%s%s[%d][%s][%s] = %v: ", typ, target, i, symbol, pdu.Name, pdu.Type)
 
 	switch pdu.Type {
 	case g.OctetString:
@@ -467,10 +479,11 @@ func ParseOIDSymbolName(dotOid string, mib *smi.MIB) string {
 		return dotOid
 	}
 
-	if symbol, _ := mib.Symbol(oid); symbol != nil {
-		return symbol.String()
+	if symbol, suffix := mib.Symbol(oid); symbol != nil {
+		return SymbolString(symbol, suffix)
 	}
-	return dotOid
+
+	return "Unknown"
 }
 
 func IsSymbolName(oid string) bool {
