@@ -85,6 +85,7 @@ func (o *Options) ParseFlags() {
 
 	if *verbose {
 		o.Logger = log.New(log.Writer(), log.Prefix(), log.Flags())
+		log.Printf("Oids:%v", o.Oids)
 	}
 }
 

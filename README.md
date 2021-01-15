@@ -234,6 +234,19 @@ snmpget是取具体的OID的值。（适用于OID值是一个叶子节点的情�
 | .1.3.6.1.4.1.2021.9.1.9  | Percentage of space used on disk        | dskPercent               | WALK     |
 | .1.3.6.1.4.1.2021.9.1.10 | Percentage of inodes used on disk       | dskPercentNode           | WALK     |
 
+### OID要不要以点开头
+
+from [here](https://support.microfocus.com/kb/doc.php?id=7743528)
+
+There is a distinction between those specified with a leading dot (i.e. '.1.3.6.1.2.1.1.3.0') 
+and those without (i.e. '1.3.0').
+
+> If an OID has a leading dot, it is assumed the OID is fully qualified. 
+
+> If there is no leading dot, it is assumed that the OID is prefixed with 'iso.org.dod.internet.mgmt.mib'.
+ 
+In the examples above both '.1.3.6.1.2.1.1.3.0' and '1.3.0' are equivalent to 'sysUpTime.0'.
+
 ### 一些图
 
 来自[这里](http://gosnmpapi.webnms.com/snmpget)
