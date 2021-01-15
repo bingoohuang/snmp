@@ -7,28 +7,28 @@ snmp package and tools in golang.
 uses the SNMP GET/BULKWALK request to query for information on a network entity
 
 ```sh
-$ snmp -t bmon@192.168.12.13 1.3.6.1.4.1.43353.1.1.1.0 1.3.6.1.4.1.43353.1.1.2.0 1.3.6.1.4.1.43353.1.1.3.0
-[get][bmon@192.168.12.13][0] .1.3.6.1.4.1.43353.1.1.1.0 = Integer: 0
-[get][bmon@192.168.12.13][1] .1.3.6.1.4.1.43353.1.1.2.0 = OctetString: SVSJm#2018/05/17-2023/05/16;SVSQm#2018/05/17-2023/05/16;156b1ba46762d0be#2018/05/17-2023/05/16
-[get][bmon@192.168.12.13][2] .1.3.6.1.4.1.43353.1.1.3.0 = OctetString: 2021/1/14 14:0:48
-[walk][bmon@192.168.12.13][0] .1.3.6.1.4.1.43353.1.1.1.0 = Integer: 0
-[walk][bmon@192.168.12.13][0] .1.3.6.1.4.1.43353.1.1.2.0 = OctetString: SVSJm#2018/05/17-2023/05/16;SVSQm#2018/05/17-2023/05/16;156b1ba46762d0be#2018/05/17-2023/05/16
-[walk][bmon@192.168.12.13][0] .1.3.6.1.4.1.43353.1.1.3.0 = OctetString: 2021/1/14 14:0:48
+❯ snmp -t bj@192.168.1.1 1.3.6.1.4.1.43353.1.1.1.0 1.3.6.1.4.1.43353.1.1.2.0 1.3.6.1.4.1.43353.1.1.3.0                      
+[get][0][BJCA-SERVER-MIB::ServiceMasterProcessStatus.0][.1.3.6.1.4.1.43353.1.1.1.0] = Integer: 0
+[get][1][BJCA-SERVER-MIB::ServerCertificateValidate.0][.1.3.6.1.4.1.43353.1.1.2.0] = OctetString: SVSJm#2018/05/17-2023/05/16;SVSQm#2018/05/17-2023/05/16;156b1ba46762d0be#2018/05/17-2023/05/16
+[get][2][BJCA-SERVER-MIB::ServerTime.0][.1.3.6.1.4.1.43353.1.1.3.0] = OctetString: 2021/1/15 17:43:13
+[walk][0][BJCA-SERVER-MIB::ServiceMasterProcessStatus.0][.1.3.6.1.4.1.43353.1.1.1.0] = Integer: 0
+[walk][0][BJCA-SERVER-MIB::ServerCertificateValidate.0][.1.3.6.1.4.1.43353.1.1.2.0] = OctetString: SVSJm#2018/05/17-2023/05/16;SVSQm#2018/05/17-2023/05/16;156b1ba46762d0be#2018/05/17-2023/05/16
+[walk][0][BJCA-SERVER-MIB::ServerTime.0][.1.3.6.1.4.1.43353.1.1.3.0] = OctetString: 2021/1/15 17:43:13
 ```
 
 use `x` as a placeholder:
 
 ```sh
-$ snmp -mode get -t bmon@192.168.12.13 -oid 1.3.6.1.4.1.43353.1.1.x.0 -x 1-3
-[get][bmon@192.168.12.13][0] .1.3.6.1.4.1.43353.1.1.1.0 = Integer: 0
-[get][bmon@192.168.12.13][1] .1.3.6.1.4.1.43353.1.1.2.0 = OctetString: SVSJm#2018/05/17-2023/05/16;SVSQm#2018/05/17-2023/05/16;156b1ba46762d0be#2018/05/17-2023/05/16
-[get][bmon@192.168.12.13][2] .1.3.6.1.4.1.43353.1.1.3.0 = OctetString: 2021/1/14 15:16:12
+❯ snmp -m get -t bj@192.168.1.1 -oid 1.3.6.1.4.1.43353.1.1.x.0 -x 1-3                                        
+[0][BJCA-SERVER-MIB::ServiceMasterProcessStatus.0][.1.3.6.1.4.1.43353.1.1.1.0] = Integer: 0
+[1][BJCA-SERVER-MIB::ServerCertificateValidate.0][.1.3.6.1.4.1.43353.1.1.2.0] = OctetString: SVSJm#2018/05/17-2023/05/16;SVSQm#2018/05/17-2023/05/16;156b1ba46762d0be#2018/05/17-2023/05/16
+[2][BJCA-SERVER-MIB::ServerTime.0][.1.3.6.1.4.1.43353.1.1.3.0] = OctetString: 2021/1/15 17:44:26
 ```
 
 start snmp trap server:
 
 ```sh
-$ snmp -trap :9162
+$ snmp -s :9162
 2021/01/14 14:01:32 got trapdata from 127.0.0.1
 [trap][127.0.0.1:65357][0] .1.3.6.1.2.1.1.3.0 = TimeTicks: 88396648
 [trap][127.0.0.1:65357][1] .1.3.6.1.6.3.1.1.4.1.0 = ObjectIdentifier: .1.3.6.1.4.1.8072.2.3.0.1
@@ -38,12 +38,20 @@ $ snmp -trap :9162
 [trap][127.0.0.1:53713][1] .1.3.6.1.6.3.1.1.4.1.0 = ObjectIdentifier: .1.3.6.1.4.1.8072.2.3.0.1
 [trap][127.0.0.1:53713][2] .1.3.6.1.4.1.8072.2.3.2.1 = Integer: 123456
 
-$ snmp -trap :9162
-2021/01/14 13:53:49 got trapdata from 127.0.0.1
-[trap][127.0.0.1:59549][0] .1.3.6.1.2.1.1.3.0 = TimeTicks: 1610603629
-[trap][127.0.0.1:59549][1] .1.3.6.1.2.1.1.6 = ObjectIdentifier: .1.3.6.1.2.1.1.6.10
-[trap][127.0.0.1:59549][2] .1.3.6.1.2.1.1.7 = OctetString: Testing TCP trap...
-[trap][127.0.0.1:59549][3] .1.3.6.1.2.1.1.8 = Integer: 123
+$ snmp -s :9162
+2021/01/15 17:49:20 got trapdata from 127.0.0.1
+[trap][0][DISMAN-EVENT-MIB::sysUpTimeInstance][.1.3.6.1.2.1.1.3.0] = TimeTicks: 98403325
+[trap][1][SNMPv2-MIB::snmpTrapOID.0][.1.3.6.1.6.3.1.1.4.1.0] = ObjectIdentifier: .1.3.6.1.4.1.8072.2.3.0.1
+[trap][2][BJCA-SERVER-MIB::ServerCertificateValidate.0][.1.3.6.1.4.1.43353.1.1.2.0] = OctetString: bingoohuang
+2021/01/15 17:49:36 got trapdata from 127.0.0.1
+[trap][0][DISMAN-EVENT-MIB::sysUpTimeInstance][.1.3.6.1.2.1.1.3.0] = TimeTicks: 98404969
+[trap][1][SNMPv2-MIB::snmpTrapOID.0][.1.3.6.1.6.3.1.1.4.1.0] = ObjectIdentifier: .1.3.6.1.4.1.8072.2.3.0.1
+[trap][2][NET-SNMP-EXAMPLES-MIB::netSnmpExampleHeartbeatRate][.1.3.6.1.4.1.8072.2.3.2.1] = Integer: 123456
+2021/01/15 17:49:50 got trapdata from 127.0.0.1
+[trap][0][DISMAN-EVENT-MIB::sysUpTimeInstance][.1.3.6.1.2.1.1.3.0] = TimeTicks: 1610704190
+[trap][1][SNMPv2-MIB::sysLocation][.1.3.6.1.2.1.1.6] = ObjectIdentifier: .1.3.6.1.2.1.1.6.10
+[trap][2][SNMPv2-MIB::sysServices][.1.3.6.1.2.1.1.7] = OctetString: Testing TCP trap...
+[trap][3][SNMPv2-MIB::sysORLastChange][.1.3.6.1.2.1.1.8] = Integer: 123
 ```
 
 Send A Test Trap:
@@ -51,9 +59,15 @@ Send A Test Trap:
 ```sh
 $ snmptrap -v 2c -c public localhost:9162 '' 1.3.6.1.4.1.8072.2.3.0.1 1.3.6.1.4.1.43353.1.1.2.0  s bingoohuang
 $ snmptrap -v 2c -c public localhost:9162 '' 1.3.6.1.4.1.8072.2.3.0.1 1.3.6.1.4.1.8072.2.3.2.1 i 123456
-$ snmp -mode trapsend -t 127.0.0.1:9162
-$ snmptranslate .1.3.6.1.2.1.1.3.0
-DISMAN-EVENT-MIB::sysUpTimeInstance
+$ snmp -m trapsend -t 127.0.0.1:9162
+```
+
+Translate MIB OID names between numeric and textual forms like `snmptranslate`
+
+```sh
+$ snmp -m translate UCD-SNMP-MIB::dskAvail.1 .1.3.6.1.2.1.1.6                       
+UCD-SNMP-MIB::dskAvail.1 => 1.3.6.1.4.1.2021.9.1.7.1
+.1.3.6.1.2.1.1.6 => SNMPv2-MIB::sysLocation
 ```
 
 ## resources
