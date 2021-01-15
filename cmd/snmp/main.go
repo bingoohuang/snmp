@@ -6,9 +6,13 @@ import (
 	"log"
 	"net"
 	"os"
+	"os/user"
+	"path/filepath"
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/bingoohuang/snmp/pkg/smi"
 
 	g "github.com/gosnmp/gosnmp"
 )
@@ -21,6 +25,7 @@ type Options struct {
 	TrapAddr string
 	Mode     string
 	Logger   *log.Logger
+	mib      *smi.MIB
 }
 
 type arrayFlags []string
@@ -67,6 +72,8 @@ func (o *Options) ParseFlags() {
 	if *verbose {
 		o.Logger = log.New(log.Writer(), log.Prefix(), log.Flags())
 	}
+
+	o.mib = LoadMibs()
 }
 
 func interpolate(args []string, xs []string, xName string) []string {
@@ -202,7 +209,7 @@ func (t *Target) snmpWalk() {
 	for _, oid := range t.Oids {
 		i := 0
 		if err := t.BulkWalk(oid, func(pdu g.SnmpPDU) error {
-			printPdu("walk", t.target, i, pdu)
+			t.printPdu("walk", t.target, i, pdu)
 			i++
 			return nil
 		}); err != nil {
@@ -223,7 +230,7 @@ func (t *Target) snmpGet() {
 	}
 
 	for i, pdu := range result.Variables {
-		printPdu("get", t.target, i, pdu)
+		t.printPdu("get", t.target, i, pdu)
 	}
 }
 
@@ -256,8 +263,9 @@ func (t *Target) trapSend() {
 	os.Exit(0)
 }
 
-func printPdu(typ, target string, i int, pdu g.SnmpPDU) {
-	fmt.Printf("[%s][%s][%d] %s = %v: ", typ, target, i, pdu.Name, pdu.Type)
+func (o *Options) printPdu(typ, target string, i int, pdu g.SnmpPDU) {
+	symbol := ParseOIDSymbolName(pdu.Name, o.mib)
+	fmt.Printf("[%s][%s][%d][%s][%s] = %v: ", typ, target, i, symbol, pdu.Name, pdu.Type)
 
 	switch pdu.Type {
 	case g.OctetString:
@@ -325,6 +333,7 @@ func (o *Options) parseCommunity(target string, gs *g.GoSNMP) string {
 func parseTargetPort(target string, gs *g.GoSNMP) {
 	if p := strings.LastIndex(target, ":"); p < 0 {
 		gs.Target = target
+		return
 	} else {
 		gs.Target = target[:p]
 		port, err := strconv.ParseUint(target[p+1:], 10, 16)
@@ -341,7 +350,7 @@ func (o *Options) trap() {
 	}
 
 	tl := g.NewTrapListener()
-	tl.OnNewTrap = trapHandler
+	tl.OnNewTrap = o.trapHandler
 	tl.Params = g.Default
 	tl.Params.Logger = o.Logger
 
@@ -350,10 +359,10 @@ func (o *Options) trap() {
 	}
 }
 
-func trapHandler(p *g.SnmpPacket, addr *net.UDPAddr) {
+func (o *Options) trapHandler(p *g.SnmpPacket, addr *net.UDPAddr) {
 	log.Printf("got trapdata from %s", addr.IP)
 	for i, v := range p.Variables {
-		printPdu("trap", addr.String(), i, v)
+		o.printPdu("trap", addr.String(), i, v)
 	}
 }
 
@@ -369,4 +378,48 @@ func refineTargetForOutput(gs *g.GoSNMP) string {
 		target += fmt.Sprintf(":%d", gs.Port)
 	}
 	return target
+}
+
+func userMibDir() (string, error) {
+	usr, err := user.Current()
+	if err != nil {
+		return "", err
+	}
+
+	return filepath.Abs(filepath.Join(usr.HomeDir, ".snmp", "mibs"))
+}
+
+func LoadMibs() *smi.MIB {
+	var dirs []string
+
+	if dir, err := userMibDir(); err != nil {
+		log.Printf("W! failed to find user mib dir(~/.snmp/mibs), error: %v", err)
+	} else {
+		dirs = append(dirs, dir)
+	}
+
+	const sysMibDir = "/usr/share/snmp/mibs"
+	if d, err := os.Stat(sysMibDir); err == nil && d.IsDir() {
+		dirs = append(dirs, sysMibDir)
+	}
+
+	mib := smi.NewMIB(dirs...)
+	if err := mib.LoadModules(); err != nil {
+		log.Printf("W! failed to load mibs, error: %v", err)
+	}
+
+	return mib
+}
+
+func ParseOIDSymbolName(dotOid string, mib *smi.MIB) string {
+	oid, err := smi.ParseOID(dotOid)
+	if err != nil {
+		log.Printf("E! parse oid error %v", err)
+		return dotOid
+	}
+
+	if symbol, _ := mib.Symbol(oid); symbol != nil {
+		return symbol.String()
+	}
+	return dotOid
 }
