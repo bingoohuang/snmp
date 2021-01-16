@@ -24,15 +24,13 @@ func userMibDir() (string, error) {
 func LoadMibs() *smi.MIB {
 	var dirs []string
 
-	if dir, err := userMibDir(); err != nil {
-		log.Printf("W! failed to find user mib dir(~/.snmp/mibs), error: %v", err)
-	} else {
-		dirs = append(dirs, dir)
-	}
+	dirs = addDir("/usr/share/snmp/mibs", dirs)
 
-	const sysMibDir = "/usr/share/snmp/mibs"
-	if d, err := os.Stat(sysMibDir); err == nil && d.IsDir() {
-		dirs = append(dirs, sysMibDir)
+	userDir, err := userMibDir()
+	if err != nil {
+		log.Printf("W! failed to read %s, error: %v", "~/.snmp/mibs", err)
+	} else {
+		dirs = addDir(userDir, dirs)
 	}
 
 	mib := smi.NewMIB(dirs...)
@@ -41,6 +39,19 @@ func LoadMibs() *smi.MIB {
 	}
 
 	return mib
+}
+
+func addDir(sysMibDir string, dirs []string) []string {
+	d, err := os.Stat(sysMibDir)
+	if err != nil {
+		log.Printf("W! failed to read %s, error: %v", sysMibDir, err)
+	} else if !d.IsDir() {
+		log.Printf("W! %s is not a directory", sysMibDir)
+	} else {
+		dirs = append(dirs, sysMibDir)
+	}
+
+	return dirs
 }
 
 func ParseOIDSymbolName(dotOid string, mib *smi.MIB) (symbolName, description string, sym *smi.Symbol) {
