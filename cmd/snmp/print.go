@@ -23,7 +23,7 @@ func (o *Options) printPdu(typ, target string, i int, pdu g.SnmpPDU) {
 	}
 
 	if o.Verbose && description != "" {
-		fmt.Printf("%sName%s: %s", KeyStyle, EndStyle, symbolName)
+		fmt.Printf("%sOidName%s: %s", KeyStyle, EndStyle, symbolName)
 		if syn.Unit != "" {
 			fmt.Printf(" %sUnit%s: %s\n", KeyStyle, EndStyle, syn.Unit)
 		} else {
