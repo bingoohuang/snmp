@@ -801,7 +801,7 @@ objectTypeClause:	tOBJECT_IDENTIFIER
 			DefValPart                   /* old $14, new $19 */
 			tCOLON_COLON_EQUAL '{' ObjectName '}' /* old $17, new $22 */
 			{
-				$$ = Node{Label: $1, Type: NodeObjectType, IDs: $20}
+				$$ = Node{Label: $1, Type: NodeObjectType, IDs: $20,  Description: $11,}
 			}
 	;
 
@@ -810,6 +810,7 @@ descriptionClause:	/* empty */
 			}
 	|		tDESCRIPTION Text
 			{
+			    $$ = $2
 			}
 	;
 

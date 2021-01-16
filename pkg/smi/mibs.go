@@ -137,14 +137,16 @@ func (mib *MIB) indexModules() error {
 				if id == -1 {
 					return fmt.Errorf("%s: expected numeric index: %v", modName, n.IDs)
 				}
-				var label string
-				if i < len(n.IDs)-1 {
-					label = ""
-				} else {
+				label := ""
+				description := ""
+
+				if i >= len(n.IDs)-1 {
 					label = n.Label
+					description = n.Description
 				}
 				sym := &Symbol{
 					Name:         label,
+					Description:  description,
 					ID:           id,
 					Module:       mod,
 					Parent:       parent,

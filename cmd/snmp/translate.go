@@ -14,27 +14,50 @@ func (o *Options) translate() {
 		return
 	}
 
+	arrow := StringStyle + "=>" + EndStyle
 	for _, v := range o.Oids {
 		if snmpp.IsSymbolName(v) {
 			if oid, err := o.mib.OID(v); err != nil {
-				fmt.Printf("%s => error %v\n", v, err)
+				fmt.Printf("%s %s error %v\n", v, arrow, err)
 			} else {
-				fmt.Printf("%s => %s\n", v, oid)
+				if symbol, suffix := o.mib.Symbol(oid); symbol != nil {
+					o.printSymbolWithDescription(symbol, suffix)
+				}
+
+				fmt.Printf("%s %s %s\n", v, arrow, oid)
 			}
 		} else {
 			oid, err := smi.ParseOID(v)
 			if err != nil {
-				fmt.Printf("%s => error %v\n", v, err)
+				fmt.Printf("%s %s error %v\n", v, arrow, err)
 				continue
 			}
 
 			if symbol, suffix := o.mib.Symbol(oid); symbol == nil {
-				fmt.Printf("%s => unknown\n", v)
+				fmt.Printf("%s %s unknown\n", v, arrow)
 			} else {
-				fmt.Printf("%s => %s\n", v, snmpp.SymbolString(symbol, suffix))
+				symbolName := o.printSymbolWithDescription(symbol, suffix)
+
+				fmt.Printf("%s %s %s\n", v, arrow, symbolName)
 			}
 		}
 	}
 
 	os.Exit(0)
+}
+
+const (
+	KeyStyle    = "\x1B[94m"
+	StringStyle = "\x1B[92m"
+	EndStyle    = "\x1B[0m"
+)
+
+func (o *Options) printSymbolWithDescription(symbol *smi.Symbol, suffix smi.OID) string {
+	symbolName, description := snmpp.SymbolString(symbol, suffix)
+	if o.Verbose && description != "" {
+		fmt.Printf("%sObjectType%s: %s\n", KeyStyle, EndStyle, symbolName)
+		fmt.Printf("%sDescription%s: %s\n", KeyStyle, EndStyle, description)
+	}
+
+	return symbolName
 }

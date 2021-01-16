@@ -6,6 +6,7 @@ import (
 	"os"
 	"os/user"
 	"path/filepath"
+	"regexp"
 	"strings"
 
 	"github.com/bingoohuang/snmp/pkg/smi"
@@ -42,28 +43,33 @@ func LoadMibs() *smi.MIB {
 	return mib
 }
 
-func ParseOIDSymbolName(dotOid string, mib *smi.MIB) string {
+func ParseOIDSymbolName(dotOid string, mib *smi.MIB) (symbolName, description string) {
 	oid, err := smi.ParseOID(dotOid)
 	if err != nil {
 		log.Printf("E! parse oid error %v", err)
-		return dotOid
+		return "", ""
 	}
 
 	if symbol, suffix := mib.Symbol(oid); symbol != nil {
 		return SymbolString(symbol, suffix)
 	}
 
-	return "Unknown"
+	return "Unknown", ""
 }
 
 func IsSymbolName(oid string) bool {
 	return strings.Contains(oid, "::")
 }
 
-func SymbolString(symbol *smi.Symbol, suffix smi.OID) string {
+func JoinLines(s string) string {
+	return regexp.MustCompile(`\s\s+`).ReplaceAllString(s, "")
+}
+
+func SymbolString(symbol *smi.Symbol, suffix smi.OID) (symbolName, description string) {
+	s := symbol.String()
 	if len(suffix) == 0 {
-		return symbol.String()
+		return s, JoinLines(symbol.Description)
 	}
 
-	return fmt.Sprintf("%s.%s", symbol, suffix.String())
+	return fmt.Sprintf("%s.%s", s, suffix.String()), JoinLines(symbol.Description)
 }

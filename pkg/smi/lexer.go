@@ -130,10 +130,10 @@ type Lexer struct {
 func init() {
 	smiDebug = 0           // debug output level for generated lexer
 	smiErrorVerbose = true // return useful error messages
-	fixToknames()
+	fixTokenames()
 }
 
-func fixToknames() {
+func fixTokenames() {
 	smiToknames[lexEOF] = "end of file"
 	smiToknames[lexUnk] = "character"
 	smiToknames[3] = "'..'"
