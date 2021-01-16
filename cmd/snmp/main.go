@@ -58,8 +58,8 @@ func (o *Options) createTarget(target string) Target {
 		Transport:          "udp",
 		Community:          DefaultCommunity,
 		Version:            g.Version2c,
-		Timeout:            time.Duration(3) * time.Second,
-		Retries:            0,
+		Timeout:            time.Duration(10) * time.Second,
+		Retries:            3,
 		ExponentialTimeout: false,
 		MaxOids:            g.MaxOids,
 	}

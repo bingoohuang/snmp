@@ -29,16 +29,6 @@ start snmp trap server:
 
 ```sh
 $ snmp -s :9162
-2021/01/14 14:01:32 got trapdata from 127.0.0.1
-[trap][127.0.0.1:65357][0] .1.3.6.1.2.1.1.3.0 = TimeTicks: 88396648
-[trap][127.0.0.1:65357][1] .1.3.6.1.6.3.1.1.4.1.0 = ObjectIdentifier: .1.3.6.1.4.1.8072.2.3.0.1
-[trap][127.0.0.1:65357][2] .1.3.6.1.4.1.43353.1.1.2.0 = OctetString: bingoohuang
-2021/01/14 14:02:00 got trapdata from 127.0.0.1
-[trap][127.0.0.1:53713][0] .1.3.6.1.2.1.1.3.0 = TimeTicks: 88399437
-[trap][127.0.0.1:53713][1] .1.3.6.1.6.3.1.1.4.1.0 = ObjectIdentifier: .1.3.6.1.4.1.8072.2.3.0.1
-[trap][127.0.0.1:53713][2] .1.3.6.1.4.1.8072.2.3.2.1 = Integer: 123456
-
-$ snmp -s :9162
 2021/01/15 17:49:20 got trapdata from 127.0.0.1
 [trap][0][DISMAN-EVENT-MIB::sysUpTimeInstance][.1.3.6.1.2.1.1.3.0] = TimeTicks: 98403325
 [trap][1][SNMPv2-MIB::snmpTrapOID.0][.1.3.6.1.6.3.1.1.4.1.0] = ObjectIdentifier: .1.3.6.1.4.1.8072.2.3.0.1
@@ -98,7 +88,9 @@ The commands above required the following settings in /etc/snmp/snmptrapd.conf
 
 * MIB：Management Information Base(管理信息库)，定义代理进程中所有可被查询和修改的参数。
 * SMI：Structure of Management Information(管理信息结构)，SMI定义了SNMP中使用到的ASN.1类型、语法，并定义了SNMP中使用到的类型、宏、符号等。SMI用于后续协议的描述和MIB的定义。每个版本的SNMP都可能定义自己的SMI。
-  * [python parse MIB files from ASN.1 SMI sources](https://github.com/qmsk/snmpbot/tree/master/scripts), [MIB json example](https://github.com/qmsk/snmpbot/blob/master/mibs/test/TEST2-MIB.json)
+  * [python parse MIB files from ASN.1 SMI sources](https://github.com/qmsk/snmpbot/tree/master/scripts)
+  * [MIB json example](https://github.com/qmsk/snmpbot/blob/master/mibs/test/TEST2-MIB.json)
+  * [oidref.com](https://oidref.com/1.3.6.1.6.3.1.1.4.1)
 * OID: 对象标识符（OID－Object Identifiers），是SNMP代理提供的具有唯一标识的键值，MIB（管理信息基）提供数字化OID到可读文本的映射。SNMP OID是用一种按照层次化格式组织的、树状结构中的唯一地址来表示的，它与DNS层次相似。
     ![image](https://user-images.githubusercontent.com/1940588/104560584-0a639380-5681-11eb-8de8-a6f71b8788c9.png)
 
@@ -263,5 +255,38 @@ In the examples above both '.1.3.6.1.2.1.1.3.0' and '1.3.0' are equivalent to 's
 来自[这里](http://gosnmpapi.webnms.com/snmpget)
 
 ![image](https://user-images.githubusercontent.com/1940588/104563024-1bfa6a80-5684-11eb-8652-319b836b41d5.png)
+
 ![image](https://user-images.githubusercontent.com/1940588/104563388-8ca18700-5684-11eb-949b-7e34b5eae7b9.png)
+
 ![image](https://user-images.githubusercontent.com/1940588/104563414-94612b80-5684-11eb-8569-7598e53acaac.png)
+
+### Configure SNMP service on Mac OSX
+
+1. `sudo -i`
+2. `vi /etc/snmp/snmpd.conf`
+3. replace
+  ```
+  com2sec local localhost COMMUNITY
+  com2sec mynetwork NETWORK/24 COMMUNITY
+  ```
+
+  with
+  ```
+  com2sec local localhost private
+  com2sec mynetwork NETWORK/24 public
+  ```
+4. replace `rocommunity public default .1.3.6.1.2.1.1.4` with `rocommunity public default .1`
+5. uncomment `#rwcommunity private`
+6. `launchctl unload /System/Library/LaunchDaemons/org.net-snmp.snmpd.plist`
+7. `launchctl load -w /System/Library/LaunchDaemons/org.net-snmp.snmpd.plist`
+8. test
+  ```sh
+  $ snmp -m get -t 127.0.0.1 -oid 1.3.6.1.4.1.2021.x -x 11.9.0,4.5.0,4.6.0,4.14.0,9.1.6.1,9.1.8.1,9.1.7.1
+  [0][UCD-SNMP-MIB::ssCpuUser.0][.1.3.6.1.4.1.2021.11.9.0] = Integer: 3
+  [1][UCD-SNMP-MIB::memTotalReal.0][.1.3.6.1.4.1.2021.4.5.0] = Integer: 16777216
+  [2][UCD-SNMP-MIB::memAvailReal.0][.1.3.6.1.4.1.2021.4.6.0] = Integer: 2596108
+  [3][UCD-SNMP-MIB::memBuffer.0][.1.3.6.1.4.1.2021.4.14.0] = NoSuchObject: <nil>
+  [4][UCD-SNMP-MIB::dskTotal.1][.1.3.6.1.4.1.2021.9.1.6.1] = Integer: 488245280
+  [5][UCD-SNMP-MIB::dskUsed.1][.1.3.6.1.4.1.2021.9.1.8.1] = Integer: 14694344
+  [6][UCD-SNMP-MIB::dskAvail.1][.1.3.6.1.4.1.2021.9.1.7.1] = Integer: 212321536
+  ```
