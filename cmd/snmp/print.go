@@ -8,7 +8,7 @@ import (
 )
 
 func (o *Options) printPdu(typ, target string, i int, pdu g.SnmpPDU) {
-	symbol, description := snmpp.ParseOIDSymbolName(pdu.Name, o.mib)
+	symbolName, description, syn := snmpp.ParseOIDSymbolName(pdu.Name, o.mib)
 
 	if o.Mode != typ {
 		typ = "[" + typ + "]"
@@ -23,18 +23,23 @@ func (o *Options) printPdu(typ, target string, i int, pdu g.SnmpPDU) {
 	}
 
 	if o.Verbose && description != "" {
-		fmt.Printf("%sName%s: %s\n", KeyStyle, EndStyle, symbol)
+		fmt.Printf("%sName%s: %s", KeyStyle, EndStyle, symbolName)
+		if syn.Unit != "" {
+			fmt.Printf(" %sUnit%s: %s\n", KeyStyle, EndStyle, syn.Unit)
+		} else {
+			fmt.Println()
+		}
 		fmt.Printf("%sDescription%s: %s\n", KeyStyle, EndStyle, description)
-		symbol = ""
+		symbolName = ""
 	}
 
-	if symbol != "" {
-		symbol = "[" + symbol + "]"
+	if symbolName != "" {
+		symbolName = "[" + symbolName + "]"
 	}
 
 	arrow := StringStyle + "=>" + EndStyle
 
-	fmt.Printf("%s%s[%d]%s[%s] %s %v: ", typ, target, i, symbol, pdu.Name, arrow, pdu.Type)
+	fmt.Printf("%s%s[%d]%s[%s] %s %v: ", typ, target, i, symbolName, pdu.Name, arrow, pdu.Type)
 
 	switch pdu.Type {
 	case g.OctetString:

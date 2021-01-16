@@ -55,7 +55,13 @@ const (
 func (o *Options) printSymbolWithDescription(symbol *smi.Symbol, suffix smi.OID) string {
 	symbolName, description := snmpp.SymbolString(symbol, suffix)
 	if o.Verbose && description != "" {
-		fmt.Printf("%sObjectType%s: %s\n", KeyStyle, EndStyle, symbolName)
+		fmt.Printf("%sObjectType%s: %s", KeyStyle, EndStyle, symbolName)
+		if symbol.Unit != "" {
+			fmt.Printf(" %sUnit%s: %s\n", KeyStyle, EndStyle, symbol.Unit)
+		} else {
+			fmt.Println()
+		}
+
 		fmt.Printf("%sDescription%s: %s\n", KeyStyle, EndStyle, description)
 	}
 

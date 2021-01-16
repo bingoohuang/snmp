@@ -43,18 +43,19 @@ func LoadMibs() *smi.MIB {
 	return mib
 }
 
-func ParseOIDSymbolName(dotOid string, mib *smi.MIB) (symbolName, description string) {
+func ParseOIDSymbolName(dotOid string, mib *smi.MIB) (symbolName, description string, sym *smi.Symbol) {
 	oid, err := smi.ParseOID(dotOid)
 	if err != nil {
 		log.Printf("E! parse oid error %v", err)
-		return "", ""
+		return "", "", nil
 	}
 
 	if symbol, suffix := mib.Symbol(oid); symbol != nil {
-		return SymbolString(symbol, suffix)
+		symbolString, desc := SymbolString(symbol, suffix)
+		return symbolString, desc, symbol
 	}
 
-	return "Unknown", ""
+	return "Unknown", "", nil
 }
 
 func IsSymbolName(oid string) bool {

@@ -52,6 +52,7 @@ type Node struct {
 	Label       string
 	Type        NodeType
 	IDs         []SubID
+	Unit        string
 	Description string
 }
 
@@ -77,6 +78,7 @@ type Symbol struct {
 	Parent       *Symbol
 	ChildByLabel map[string]*Symbol
 	ChildByID    map[int]*Symbol
+	Unit         string
 	Description  string
 }
 
