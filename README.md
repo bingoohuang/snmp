@@ -60,6 +60,35 @@ UCD-SNMP-MIB::dskAvail.1 => 1.3.6.1.4.1.2021.9.1.7.1
 .1.3.6.1.2.1.1.6 => SNMPv2-MIB::sysLocation
 ```
 
+```sh
+$ snmp -V -m translate -oid 1.3.6.1.4.1.2021.x -x 11.9.0,4.5.0,4.6.0,4.14.0,9.1.6.1,9.1.8.1,9.1.7.1 -oid 1.3.6.1.4.1.43353.1.1.y.0 -y 1-3
+2021/01/16 12:18:14 Oids:[1.3.6.1.4.1.2021.11.9.0 1.3.6.1.4.1.2021.4.5.0 1.3.6.1.4.1.2021.4.6.0 1.3.6.1.4.1.2021.4.14.0 1.3.6.1.4.1.2021.9.1.6.1 1.3.6.1.4.1.2021.9.1.8.1 1.3.6.1.4.1.2021.9.1.7.1 1.3.6.1.4.1.43353.1.1.1.0 1.3.6.1.4.1.43353.1.1.2.0 1.3.6.1.4.1.43353.1.1.3.0]
+ObjectType: UCD-SNMP-MIB::ssCpuUser.0
+Description: The percentage of CPU time spent processinguser-level code, calculated over the last minute.This object has been deprecated in favour of'ssCpuRawUser(50)', which can be used to calculatethe same metric, but over any desired time period.
+1.3.6.1.4.1.2021.11.9.0 => UCD-SNMP-MIB::ssCpuUser.0
+ObjectType: UCD-SNMP-MIB::memTotalReal.0 Unit: kB
+Description: The total amount of real/physical memory installedon this host.
+1.3.6.1.4.1.2021.4.5.0 => UCD-SNMP-MIB::memTotalReal.0
+ObjectType: UCD-SNMP-MIB::memAvailReal.0 Unit: kB
+Description: The amount of real/physical memory currently unusedor available.
+1.3.6.1.4.1.2021.4.6.0 => UCD-SNMP-MIB::memAvailReal.0
+ObjectType: UCD-SNMP-MIB::memBuffer.0 Unit: kB
+Description: The total amount of real or virtual memory currentlyallocated for use as memory buffers.This object will not be implemented on hosts where theunderlying operating system does not explicitly identifymemory as specifically reserved for this purpose.
+1.3.6.1.4.1.2021.4.14.0 => UCD-SNMP-MIB::memBuffer.0
+ObjectType: UCD-SNMP-MIB::dskTotal.1
+Description: Total size of the disk/partion (kBytes).For large disks (>2Tb), this value willlatch at INT32_MAX (2147483647).
+1.3.6.1.4.1.2021.9.1.6.1 => UCD-SNMP-MIB::dskTotal.1
+ObjectType: UCD-SNMP-MIB::dskUsed.1
+Description: Used space on the disk.For large heavily-used disks (>2Tb), thisvalue will latch at INT32_MAX (2147483647).
+1.3.6.1.4.1.2021.9.1.8.1 => UCD-SNMP-MIB::dskUsed.1
+ObjectType: UCD-SNMP-MIB::dskAvail.1
+Description: Available space on the disk.For large lightly-used disks (>2Tb), thisvalue will latch at INT32_MAX (2147483647).
+1.3.6.1.4.1.2021.9.1.7.1 => UCD-SNMP-MIB::dskAvail.1
+1.3.6.1.4.1.43353.1.1.1.0 => BJSER-MIB-MIB::MasterProcessStatus.0
+1.3.6.1.4.1.43353.1.1.2.0 => BJSER-MIB-MIB::CertificateValidate.0
+1.3.6.1.4.1.43353.1.1.3.0 => BJSER-MIB-MIB::ServerTime.0
+```
+
 ## resources
 
 ### SNMP v2 Trap
