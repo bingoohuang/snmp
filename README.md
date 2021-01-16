@@ -8,21 +8,21 @@ uses the SNMP GET/BULKWALK request to query for information on a network entity
 
 ```sh
 ❯ snmp -t bj@192.168.1.1 1.3.6.1.4.1.43353.1.1.1.0 1.3.6.1.4.1.43353.1.1.2.0 1.3.6.1.4.1.43353.1.1.3.0                      
-[get][0][BJCA-SERVER-MIB::ServiceMasterProcessStatus.0][.1.3.6.1.4.1.43353.1.1.1.0] = Integer: 0
-[get][1][BJCA-SERVER-MIB::ServerCertificateValidate.0][.1.3.6.1.4.1.43353.1.1.2.0] = OctetString: SVSJm#2018/05/17-2023/05/16;SVSQm#2018/05/17-2023/05/16;156b1ba46762d0be#2018/05/17-2023/05/16
-[get][2][BJCA-SERVER-MIB::ServerTime.0][.1.3.6.1.4.1.43353.1.1.3.0] = OctetString: 2021/1/15 17:43:13
-[walk][0][BJCA-SERVER-MIB::ServiceMasterProcessStatus.0][.1.3.6.1.4.1.43353.1.1.1.0] = Integer: 0
-[walk][0][BJCA-SERVER-MIB::ServerCertificateValidate.0][.1.3.6.1.4.1.43353.1.1.2.0] = OctetString: SVSJm#2018/05/17-2023/05/16;SVSQm#2018/05/17-2023/05/16;156b1ba46762d0be#2018/05/17-2023/05/16
-[walk][0][BJCA-SERVER-MIB::ServerTime.0][.1.3.6.1.4.1.43353.1.1.3.0] = OctetString: 2021/1/15 17:43:13
+[get][0][BJSER-MIB::MasterProcessStatus.0][.1.3.6.1.4.1.43353.1.1.1.0] = Integer: 0
+[get][1][BJSER-MIB::CertificateValidate.0][.1.3.6.1.4.1.43353.1.1.2.0] = OctetString: SVSJm#2018/05/17-2023/05/16;SVSQm#2018/05/17-2023/05/16;156b1ba46762d0be#2018/05/17-2023/05/16
+[get][2][BJSER-MIB::ServerTime.0][.1.3.6.1.4.1.43353.1.1.3.0] = OctetString: 2021/1/15 17:43:13
+[walk][0][BJSER-MIB::MasterProcessStatus.0][.1.3.6.1.4.1.43353.1.1.1.0] = Integer: 0
+[walk][0][BJSER-MIB::CertificateValidate.0][.1.3.6.1.4.1.43353.1.1.2.0] = OctetString: SVSJm#2018/05/17-2023/05/16;SVSQm#2018/05/17-2023/05/16;156b1ba46762d0be#2018/05/17-2023/05/16
+[walk][0][BJSER-MIB::ServerTime.0][.1.3.6.1.4.1.43353.1.1.3.0] = OctetString: 2021/1/15 17:43:13
 ```
 
 use `x` as a placeholder:
 
 ```sh
 ❯ snmp -m get -t bj@192.168.1.1 -oid 1.3.6.1.4.1.43353.1.1.x.0 -x 1-3                                        
-[0][BJCA-SERVER-MIB::ServiceMasterProcessStatus.0][.1.3.6.1.4.1.43353.1.1.1.0] = Integer: 0
-[1][BJCA-SERVER-MIB::ServerCertificateValidate.0][.1.3.6.1.4.1.43353.1.1.2.0] = OctetString: SVSJm#2018/05/17-2023/05/16;SVSQm#2018/05/17-2023/05/16;156b1ba46762d0be#2018/05/17-2023/05/16
-[2][BJCA-SERVER-MIB::ServerTime.0][.1.3.6.1.4.1.43353.1.1.3.0] = OctetString: 2021/1/15 17:44:26
+[0][BJSER-MIB::MasterProcessStatus.0][.1.3.6.1.4.1.43353.1.1.1.0] = Integer: 0
+[1][BJSER-MIB::CertificateValidate.0][.1.3.6.1.4.1.43353.1.1.2.0] = OctetString: SVSJm#2018/05/17-2023/05/16;SVSQm#2018/05/17-2023/05/16;156b1ba46762d0be#2018/05/17-2023/05/16
+[2][BJSER-MIB::ServerTime.0][.1.3.6.1.4.1.43353.1.1.3.0] = OctetString: 2021/1/15 17:44:26
 ```
 
 start snmp trap server:
@@ -42,7 +42,7 @@ $ snmp -s :9162
 2021/01/15 17:49:20 got trapdata from 127.0.0.1
 [trap][0][DISMAN-EVENT-MIB::sysUpTimeInstance][.1.3.6.1.2.1.1.3.0] = TimeTicks: 98403325
 [trap][1][SNMPv2-MIB::snmpTrapOID.0][.1.3.6.1.6.3.1.1.4.1.0] = ObjectIdentifier: .1.3.6.1.4.1.8072.2.3.0.1
-[trap][2][BJCA-SERVER-MIB::ServerCertificateValidate.0][.1.3.6.1.4.1.43353.1.1.2.0] = OctetString: bingoohuang
+[trap][2][BJSER-MIB::CertificateValidate.0][.1.3.6.1.4.1.43353.1.1.2.0] = OctetString: bingoohuang
 2021/01/15 17:49:36 got trapdata from 127.0.0.1
 [trap][0][DISMAN-EVENT-MIB::sysUpTimeInstance][.1.3.6.1.2.1.1.3.0] = TimeTicks: 98404969
 [trap][1][SNMPv2-MIB::snmpTrapOID.0][.1.3.6.1.6.3.1.1.4.1.0] = ObjectIdentifier: .1.3.6.1.4.1.8072.2.3.0.1
@@ -92,18 +92,15 @@ The commands above required the following settings in /etc/snmp/snmptrapd.conf
 
 * SNMP：Simple Network Management Protocol(简单网络管理协议)，是一个标准的用于管理基于IP网络上设备的协议。
 
-  SNMP的主要功能: 通过应答POLLING(轮询)来反馈当前设备状态;
-
-  SNMP的工作方式: 管理员需要向设备获取数据,所以SNMP提供了"读"操作;管理员需要向设备执行设置操作,所以SNMP提供了"写"操作; 设备需要在重要状况改变的时候,向管理员通报事件的发生,所以SNMP提供了"Trap" 操作;
-
-  SNMP被设计为工作在TCP/IP协议族上.SNMP基于TCP/IP协议工作,对网络中支持SNMP协议的设备进行管理.所有支持SNMP协议的设备
-  都提供SNMP这个统一界面，使得管理员可以使用统一的操作进行管理，而不必理会设备是什么类型、是哪个厂家生产的.
+  * SNMP的主要功能: 通过应答POLLING(轮询)来反馈当前设备状态;
+  * SNMP的工作方式: 管理员需要向设备获取数据,所以SNMP提供了"读"操作;管理员需要向设备执行设置操作,所以SNMP提供了"写"操作; 设备需要在重要状况改变的时候,向管理员通报事件的发生,所以SNMP提供了"Trap" 操作;
+  * SNMP被设计为工作在TCP/IP协议族上.SNMP基于TCP/IP协议工作,对网络中支持SNMP协议的设备进行管理.所有支持SNMP协议的设备都提供SNMP这个统一界面，使得管理员可以使用统一的操作进行管理，而不必理会设备是什么类型、是哪个厂家生产的.
 
 * MIB：Management Information Base(管理信息库)，定义代理进程中所有可被查询和修改的参数。
 * SMI：Structure of Management Information(管理信息结构)，SMI定义了SNMP中使用到的ASN.1类型、语法，并定义了SNMP中使用到的类型、宏、符号等。SMI用于后续协议的描述和MIB的定义。每个版本的SNMP都可能定义自己的SMI。
+  * [python parse MIB files from ASN.1 SMI sources](https://github.com/qmsk/snmpbot/tree/master/scripts), [MIB json example](https://github.com/qmsk/snmpbot/blob/master/mibs/test/TEST2-MIB.json)
 * OID: 对象标识符（OID－Object Identifiers），是SNMP代理提供的具有唯一标识的键值，MIB（管理信息基）提供数字化OID到可读文本的映射。SNMP OID是用一种按照层次化格式组织的、树状结构中的唯一地址来表示的，它与DNS层次相似。
     ![image](https://user-images.githubusercontent.com/1940588/104560584-0a639380-5681-11eb-8de8-a6f71b8788c9.png)
-
 
 ### 安装使用 SNMP
 
