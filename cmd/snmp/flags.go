@@ -42,7 +42,7 @@ func (o *Options) ParseFlags() {
 	flag.Var(&x, "x", "")
 	flag.Var(&y, "y", "")
 	flag.Var(&z, "z", "")
-	flag.Var(&o.Oids, "oid", "")
+	flag.Var(&o.Oids, "o", "")
 	flag.StringVar(&o.TrapAddr, "s", "", "")
 	flag.BoolVar(&o.Verbose, "V", false, "")
 
@@ -51,10 +51,10 @@ func (o *Options) ParseFlags() {
   -m     get/walk/trapsend/translate (default is get/walk)
   -c     string Default SNMP community (default "public")
   -t     one or more SNMP targets (eg. -t 192.168.1.1 -t myCommunity@192.168.1.2:1234)
-  -x/y/z one or more x/y/z vars (eg. -x 1-3)
-  -oid   one or more Oids
+  -x/y/z one or more x/y/z vars (eg. -x 1-3 -y 1,3,5 -z 1,2-5)
+  -o     one or more Oids
   -s     trap server listening address(eg. :9162)
-  -V     Verbose logging of packets
+  -V     Verbose logging of packets, oid units, oid description and etc.
 `)
 	}
 

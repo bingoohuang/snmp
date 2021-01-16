@@ -2,6 +2,18 @@
 
 snmp package and tools in golang.
 
+```sh
+$ snmp -h
+Usage of snmp: snmp [options] oids...
+  -m     get/walk/trapsend/translate (default is get/walk)
+  -c     string Default SNMP community (default "public")
+  -t     one or more SNMP targets (eg. -t 192.168.1.1 -t myCommunity@192.168.1.2:1234)
+  -x/y/z one or more x/y/z vars (eg. -x 1-3 -y 1,3,5 -z 1,2-5)
+  -o     one or more oids
+  -s     trap server listening address(eg. :9162)
+  -V     Verbose logging of packets, oid units, oid description and etc.
+```
+
 ## examples
 
 uses the SNMP GET/BULKWALK request to query for information on a network entity
@@ -19,7 +31,7 @@ uses the SNMP GET/BULKWALK request to query for information on a network entity
 use `x` as a placeholder:
 
 ```sh
-❯ snmp -m get -t bj@192.168.1.1 -oid 1.3.6.1.4.1.43353.1.1.x.0 -x 1-3                                        
+❯ snmp -m get -t bj@192.168.1.1 -o 1.3.6.1.4.1.43353.1.1.x.0 -x 1-3                                        
 [0][BJSER-MIB::MasterProcessStatus.0][.1.3.6.1.4.1.43353.1.1.1.0] = Integer: 0
 [1][BJSER-MIB::CertificateValidate.0][.1.3.6.1.4.1.43353.1.1.2.0] = OctetString: SVSJm#2018/05/17-2023/05/16;SVSQm#2018/05/17-2023/05/16;156b1ba46762d0be#2018/05/17-2023/05/16
 [2][BJSER-MIB::ServerTime.0][.1.3.6.1.4.1.43353.1.1.3.0] = OctetString: 2021/1/15 17:44:26
@@ -61,7 +73,7 @@ UCD-SNMP-MIB::dskAvail.1 => 1.3.6.1.4.1.2021.9.1.7.1
 ```
 
 ```sh
-$ snmp -V -m translate -oid 1.3.6.1.4.1.2021.x -x 11.9.0,4.5.0,4.6.0,4.14.0,9.1.6.1,9.1.8.1,9.1.7.1 -oid 1.3.6.1.4.1.43353.1.1.y.0 -y 1-3
+$ snmp -V -m translate -o 1.3.6.1.4.1.2021.x -x 11.9.0,4.5.0,4.6.0,4.14.0,9.1.6.1,9.1.8.1,9.1.7.1 -o 1.3.6.1.4.1.43353.1.1.y.0 -y 1-3
 2021/01/16 12:18:14 Oids:[1.3.6.1.4.1.2021.11.9.0 1.3.6.1.4.1.2021.4.5.0 1.3.6.1.4.1.2021.4.6.0 1.3.6.1.4.1.2021.4.14.0 1.3.6.1.4.1.2021.9.1.6.1 1.3.6.1.4.1.2021.9.1.8.1 1.3.6.1.4.1.2021.9.1.7.1 1.3.6.1.4.1.43353.1.1.1.0 1.3.6.1.4.1.43353.1.1.2.0 1.3.6.1.4.1.43353.1.1.3.0]
 OidName: UCD-SNMP-MIB::ssCpuUser.0
 Description: The percentage of CPU time spent processinguser-level code, calculated over the last minute.This object has been deprecated in favour of'ssCpuRawUser(50)', which can be used to calculatethe same metric, but over any desired time period.
@@ -311,7 +323,7 @@ In the examples above both '.1.3.6.1.2.1.1.3.0' and '1.3.0' are equivalent to 's
 7. `launchctl load -w /System/Library/LaunchDaemons/org.net-snmp.snmpd.plist`
 8. test
   ```sh
-  $ snmp -m get -t 127.0.0.1 -oid 1.3.6.1.4.1.2021.x -x 11.9.0,4.5.0,4.6.0,4.14.0,9.1.6.1,9.1.8.1,9.1.7.1
+  $ snmp -m get -t 127.0.0.1 -o 1.3.6.1.4.1.2021.x -x 11.9.0,4.5.0,4.6.0,4.14.0,9.1.6.1,9.1.8.1,9.1.7.1
   [0][UCD-SNMP-MIB::ssCpuUser.0][.1.3.6.1.4.1.2021.11.9.0] = Integer: 3
   [1][UCD-SNMP-MIB::memTotalReal.0][.1.3.6.1.4.1.2021.4.5.0] = Integer: 16777216
   [2][UCD-SNMP-MIB::memAvailReal.0][.1.3.6.1.4.1.2021.4.6.0] = Integer: 2596108
