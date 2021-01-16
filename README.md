@@ -339,6 +339,11 @@ In the examples above both '.1.3.6.1.2.1.1.3.0' and '1.3.0' are equivalent to 's
 
 ![image](https://user-images.githubusercontent.com/1940588/104563414-94612b80-5684-11eb-8569-7598e53acaac.png)
 
+[Monitoring via SNMP](https://www.paessler.com/info/snmp_mibs_and_oids_an_overview)
+
+![image](https://user-images.githubusercontent.com/1940588/104808403-f8b8f200-5820-11eb-8d05-1420d1e9e109.png)
+
+
 ### Configure SNMP service on Mac OSX
 
 1. `sudo -i`
