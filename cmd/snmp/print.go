@@ -10,7 +10,7 @@ import (
 func (o *Options) printPdu(typ, target string, i int, pdu g.SnmpPDU) {
 	symbolName, description, syn := snmpp.ParseOIDSymbolName(pdu.Name, o.mib)
 
-	if o.Mode != typ {
+	if o.Operate != typ {
 		typ = "[" + typ + "]"
 	} else {
 		typ = ""

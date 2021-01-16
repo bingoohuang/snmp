@@ -4,8 +4,8 @@ snmp package and tools in golang.
 
 ```sh
 $ snmp -h
-Usage of snmp: snmp [options] oids...
-  -m     get/walk/trapsend/translate (default is get/walk)
+Usage: snmp [options] oids...
+  -m     method to operate, get/walk/trapsend/translate (default is get/walk)
   -c     string Default SNMP community (default "public")
   -t     one or more SNMP targets (eg. -t 192.168.1.1 -t myCommunity@192.168.1.2:1234)
   -x/y/z one or more x/y/z vars (eg. -x 1-3 -y 1,3,5 -z 1,2-5)

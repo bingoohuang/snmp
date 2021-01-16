@@ -10,7 +10,7 @@ import (
 )
 
 func (o *Options) translate() {
-	if !strings.Contains(o.Mode, "translate") {
+	if !strings.Contains(o.Operate, "translate") {
 		return
 	}
 

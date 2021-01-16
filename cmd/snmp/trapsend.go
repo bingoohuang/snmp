@@ -9,7 +9,7 @@ import (
 )
 
 func (t *Target) trapSend() {
-	if !strings.Contains(t.Mode, "trapsend") {
+	if !strings.Contains(t.Operate, "trapsend") {
 		return
 	}
 

@@ -19,7 +19,7 @@ type Options struct {
 	Verbose   bool
 
 	TrapAddr string
-	Mode     string
+	Operate  string
 	Logger   *log.Logger
 	mib      *smi.MIB
 }
@@ -36,7 +36,7 @@ func (i *arrayFlags) Set(value string) error {
 func (o *Options) ParseFlags() {
 	var x, y, z arrayFlags
 
-	flag.StringVar(&o.Mode, "m", "get/walk", "")
+	flag.StringVar(&o.Operate, "m", "get/walk", "")
 	flag.StringVar(&o.Community, "c", "public", "")
 	flag.Var(&o.Targets, "t", "")
 	flag.Var(&x, "x", "")
@@ -47,8 +47,8 @@ func (o *Options) ParseFlags() {
 	flag.BoolVar(&o.Verbose, "V", false, "")
 
 	flag.Usage = func() {
-		_, _ = fmt.Fprintf(os.Stderr, `Usage of snmp: snmp [options] Oids...
-  -m     get/walk/trapsend/translate (default is get/walk)
+		_, _ = fmt.Fprintf(os.Stderr, `Usage: snmp [options] Oids...
+  -m     method to operate, get/walk/trapsend/translate (default is get/walk)
   -c     string Default SNMP community (default "public")
   -t     one or more SNMP targets (eg. -t 192.168.1.1 -t myCommunity@192.168.1.2:1234)
   -x/y/z one or more x/y/z vars (eg. -x 1-3 -y 1,3,5 -z 1,2-5)
@@ -62,7 +62,7 @@ func (o *Options) ParseFlags() {
 
 	o.mib = snmpp.LoadMibs()
 	o.Oids = append(o.Oids, flag.Args()...)
-	isTranslate := o.Mode == "translate"
+	isTranslate := o.Operate == "translate"
 	o.Oids = interpolate(isTranslate, o.mib, o.Oids, util.ExpandNums(x), "x")
 	o.Oids = interpolate(isTranslate, o.mib, o.Oids, util.ExpandNums(y), "y")
 	o.Oids = interpolate(isTranslate, o.mib, o.Oids, util.ExpandNums(z), "z")

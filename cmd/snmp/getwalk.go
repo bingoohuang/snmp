@@ -8,7 +8,7 @@ import (
 )
 
 func (t *Target) snmpWalk() {
-	if !strings.Contains(t.Mode, "walk") {
+	if !strings.Contains(t.Operate, "walk") {
 		return
 	}
 
@@ -25,7 +25,7 @@ func (t *Target) snmpWalk() {
 }
 
 func (t *Target) snmpGet() {
-	if !strings.Contains(t.Mode, "get") {
+	if !strings.Contains(t.Operate, "get") {
 		return
 	}
 
