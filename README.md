@@ -91,6 +91,7 @@ The commands above required the following settings in /etc/snmp/snmptrapd.conf
   * [python parse MIB files from ASN.1 SMI sources](https://github.com/qmsk/snmpbot/tree/master/scripts)
   * [MIB json example](https://github.com/qmsk/snmpbot/blob/master/mibs/test/TEST2-MIB.json)
   * [oidref.com](https://oidref.com/1.3.6.1.6.3.1.1.4.1)
+  * [http://oid-info.com/](http://oid-info.com/get/1.3.6.1.4.1.2021.4.5)
 * OID: 对象标识符（OID－Object Identifiers），是SNMP代理提供的具有唯一标识的键值，MIB（管理信息基）提供数字化OID到可读文本的映射。SNMP OID是用一种按照层次化格式组织的、树状结构中的唯一地址来表示的，它与DNS层次相似。
     ![image](https://user-images.githubusercontent.com/1940588/104560584-0a639380-5681-11eb-8de8-a6f71b8788c9.png)
 
