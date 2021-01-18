@@ -18,29 +18,30 @@ func (o *Options) translate() {
 	for _, v := range o.Oids {
 		if snmpp.IsSymbolName(v) {
 			if oid, err := o.mib.OID(v); err != nil {
-				fmt.Printf("%s %s error %v\n", v, arrow, err)
+				fmt.Printf("%s %s error %v", v, arrow, err)
 			} else {
+				fmt.Printf("%s %s %s", v, arrow, oid)
 				if symbol, suffix := o.mib.Symbol(oid); symbol != nil {
-					o.printSymbolWithDescription(symbol, suffix)
+					o.printSymbolWithDescription(symbol, suffix, false)
 				}
-
-				fmt.Printf("%s %s %s\n", v, arrow, oid)
 			}
 		} else {
 			oid, err := smi.ParseOID(v)
 			if err != nil {
-				fmt.Printf("%s %s error %v\n", v, arrow, err)
+				fmt.Printf("%s %s error %v", v, arrow, err)
 				continue
 			}
 
 			if symbol, suffix := o.mib.Symbol(oid); symbol == nil {
-				fmt.Printf("%s %s unknown\n", v, arrow)
+				fmt.Printf("%s %s unknown", v, arrow)
 			} else {
-				symbolName := o.printSymbolWithDescription(symbol, suffix)
-
-				fmt.Printf("%s %s %s\n", v, arrow, symbolName)
+				symbolName, f := o.printSymbolWithDescription(symbol, suffix, true)
+				fmt.Printf("%s %s %s", v, arrow, symbolName)
+				f()
 			}
 		}
+
+		fmt.Println()
 	}
 
 	os.Exit(0)
@@ -49,21 +50,28 @@ func (o *Options) translate() {
 const (
 	KeyStyle    = "\x1B[94m"
 	StringStyle = "\x1B[92m"
+	RedStyle    = "\x1B[31m"
+	GrayStyle   = "\x1B[37m"
 	EndStyle    = "\x1B[0m"
 )
 
-func (o *Options) printSymbolWithDescription(symbol *smi.Symbol, suffix smi.OID) string {
+func (o *Options) printSymbolWithDescription(symbol *smi.Symbol, suffix smi.OID, delay bool) (string, func()) {
 	symbolName, description := snmpp.SymbolString(symbol, suffix)
-	if o.Verbose && description != "" {
-		fmt.Printf("%sOidName%s: %s", KeyStyle, EndStyle, symbolName)
-		if symbol.Unit != "" {
-			fmt.Printf(" %sUnit%s: %s\n", KeyStyle, EndStyle, symbol.Unit)
-		} else {
-			fmt.Println()
-		}
+	f := func() {}
 
-		fmt.Printf("%sDescription%s: %s\n", KeyStyle, EndStyle, description)
+	if o.Verbose && description != "" {
+		f = func() {
+			if symbol.Unit != "" {
+				fmt.Printf(" Unit: %s", KeyStyle+symbol.Unit+EndStyle)
+			}
+
+			fmt.Printf(" Desc: %s", GrayStyle+description+EndStyle)
+		}
 	}
 
-	return symbolName
+	if !delay {
+		f()
+	}
+
+	return symbolName, f
 }

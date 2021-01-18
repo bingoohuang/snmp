@@ -74,7 +74,7 @@ func IsSymbolName(oid string) bool {
 }
 
 func JoinLines(s string) string {
-	return regexp.MustCompile(`\s\s+`).ReplaceAllString(s, "")
+	return regexp.MustCompile(`\s\s+`).ReplaceAllString(s, " ")
 }
 
 func SymbolString(symbol *smi.Symbol, suffix smi.OID) (symbolName, description string) {
