@@ -42,7 +42,7 @@ func (o *Options) printPdu(typ, target string, i int, pdu g.SnmpPDU) {
 
 	if o.Verbose && description != "" {
 		if syn.Unit != "" {
-			fmt.Printf(" Unit: %s ", KeyStyle+syn.Unit+EndStyle)
+			fmt.Printf(" Unit: %s", KeyStyle+syn.Unit+EndStyle)
 		}
 
 		fmt.Printf(" Desc: %s", GrayStyle+description+EndStyle)
