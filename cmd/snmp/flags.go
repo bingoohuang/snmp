@@ -44,7 +44,7 @@ func (o *Options) ParseFlags() {
 	flag.Var(&z, "z", "")
 	flag.Var(&o.Oids, "o", "")
 	flag.StringVar(&o.TrapAddr, "s", "", "")
-	flag.StringVar(&o.Verbose, "V", "", "")
+	flag.StringVar(&o.Verbose, "V", "", "debug,desc")
 
 	flag.Usage = func() {
 		_, _ = fmt.Fprintf(os.Stderr, `Usage: snmp [options] Oids...
@@ -54,7 +54,7 @@ func (o *Options) ParseFlags() {
   -x/y/z one or more x/y/z vars (eg. -x 1-3 -y 1,3,5 -z 1,2-5)
   -o     one or more Oids
   -s     trap server listening address(eg. :9162)
-  -V     Verbose logging of packets, oid units, oid description and etc.
+  -V     debug/desc, Verbose logging of packets, oid units, oid description and etc.
 `)
 	}
 
@@ -67,7 +67,7 @@ func (o *Options) ParseFlags() {
 	o.Oids = interpolate(isTranslate, o.mib, o.Oids, util.ExpandNums(y), "y")
 	o.Oids = interpolate(isTranslate, o.mib, o.Oids, util.ExpandNums(z), "z")
 
-	if strings.Contains(o.Verbose, "log") {
+	if strings.Contains(o.Verbose, "debug") {
 		o.Logger = log.New(log.Writer(), log.Prefix(), log.Flags())
 		log.Printf("Oids:%v", o.Oids)
 	}
