@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/bingoohuang/snmp/pkg/snmpp"
 	g "github.com/gosnmp/gosnmp"
@@ -40,7 +41,7 @@ func (o *Options) printPdu(typ, target string, i int, pdu g.SnmpPDU) {
 	}
 	fmt.Print(EndStyle)
 
-	if o.Verbose && description != "" {
+	if strings.Contains(o.Verbose, "desc") && description != "" {
 		if syn.Unit != "" {
 			fmt.Printf(" Unit: %s", KeyStyle+syn.Unit+EndStyle)
 		}

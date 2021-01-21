@@ -69,8 +69,10 @@ func ParseOIDSymbolName(dotOid string, mib *smi.MIB) (symbolName, description st
 	return "Unknown", "", nil
 }
 
+var OidPattern = regexp.MustCompile(`\.?\d+(\.\d+)*`)
+
 func IsSymbolName(oid string) bool {
-	return strings.Contains(oid, "::")
+	return strings.Contains(oid, "::") || !OidPattern.MatchString(oid)
 }
 
 func JoinLines(s string) string {

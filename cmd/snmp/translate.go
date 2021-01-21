@@ -51,7 +51,7 @@ const (
 	KeyStyle    = "\x1B[94m"
 	StringStyle = "\x1B[92m"
 	RedStyle    = "\x1B[31m"
-	GrayStyle   = "\x1B[37m"
+	GrayStyle   = "\x1B[36m"
 	EndStyle    = "\x1B[0m"
 )
 
@@ -59,7 +59,7 @@ func (o *Options) printSymbolWithDescription(symbol *smi.Symbol, suffix smi.OID,
 	symbolName, description := snmpp.SymbolString(symbol, suffix)
 	f := func() {}
 
-	if o.Verbose && description != "" {
+	if strings.Contains(o.Verbose, "desc") && description != "" {
 		f = func() {
 			if symbol.Unit != "" {
 				fmt.Printf(" Unit: %s", KeyStyle+symbol.Unit+EndStyle)

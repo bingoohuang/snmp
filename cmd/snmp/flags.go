@@ -16,7 +16,7 @@ type Options struct {
 	Community string
 	Targets   arrayFlags
 	Oids      arrayFlags
-	Verbose   bool
+	Verbose   string
 
 	TrapAddr string
 	Operate  string
@@ -44,7 +44,7 @@ func (o *Options) ParseFlags() {
 	flag.Var(&z, "z", "")
 	flag.Var(&o.Oids, "o", "")
 	flag.StringVar(&o.TrapAddr, "s", "", "")
-	flag.BoolVar(&o.Verbose, "V", false, "")
+	flag.StringVar(&o.Verbose, "V", "", "")
 
 	flag.Usage = func() {
 		_, _ = fmt.Fprintf(os.Stderr, `Usage: snmp [options] Oids...
@@ -67,7 +67,7 @@ func (o *Options) ParseFlags() {
 	o.Oids = interpolate(isTranslate, o.mib, o.Oids, util.ExpandNums(y), "y")
 	o.Oids = interpolate(isTranslate, o.mib, o.Oids, util.ExpandNums(z), "z")
 
-	if o.Verbose {
+	if strings.Contains(o.Verbose, "log") {
 		o.Logger = log.New(log.Writer(), log.Prefix(), log.Flags())
 		log.Printf("Oids:%v", o.Oids)
 	}
