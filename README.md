@@ -103,6 +103,10 @@ Description: Available space on the disk.For large lightly-used disks (>2Tb), th
 
 ## resources
 
+### public resources
+
+1. [SMPP (3.4) Client Library in pure Go](https://github.com/linxGnu/gosmpp), This library is well tested with SMSC simulators: [Melroselabs SMSC](https://melroselabs.com/services/smsc-simulator/#smsc-simulator-try)
+
 ### SNMP v2 Trap
 
 [SNMP Trap - How To Send A Test Trap](https://support.nagios.com/kb/article.php?id=493)
