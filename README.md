@@ -244,84 +244,84 @@ snmpget是取具体的OID的值。（适用于OID值是一个叶子节点的情�
 
 [from](https://www.cnblogs.com/aspx-net/p/3554044.html)
 
-| 系统参数  OID           | 描述               | 备注              | 请求方式 |
-|-------------------------|------------------|-------------------|----------|
-| .1.3.6.1.2.1.1.1.0      | 获取系统基本信息   | SysDesc           | GET      |
-| .1.3.6.1.2.1.1.3.0      | 监控时间           | sysUptime         | GET      |
-| .1.3.6.1.2.1.1.4.0      | 系统联系人         | sysContact        | GET      |
-| .1.3.6.1.2.1.1.5.0      | 获取机器名         | SysName           | GET      |
-| .1.3.6.1.2.1.1.6.0      | 机器坐在位置       | SysLocation       | GET      |
-| .1.3.6.1.2.1.1.7.0      | 机器提供的服务     | SysService        | GET      |
-| .1.3.6.1.2.1.25.4.2.1.2 | 系统运行的进程列表 | hrSWRunName       | WALK     |
-| .1.3.6.1.2.1.25.6.3.1.2 | 系统安装的软件列表 | hrSWInstalledName | WALK     |
+| 系统参数  OID               | 描述        | 备注                | 请求方式 |
+|-------------------------|-----------|-------------------|------|
+| .1.3.6.1.2.1.1.1.0      | 获取系统基本信息  | SysDesc           | GET  |
+| .1.3.6.1.2.1.1.3.0      | 监控时间      | sysUptime         | GET  |
+| .1.3.6.1.2.1.1.4.0      | 系统联系人     | sysContact        | GET  |
+| .1.3.6.1.2.1.1.5.0      | 获取机器名     | SysName           | GET  |
+| .1.3.6.1.2.1.1.6.0      | 机器坐在位置    | SysLocation       | GET  |
+| .1.3.6.1.2.1.1.7.0      | 机器提供的服务   | SysService        | GET  |
+| .1.3.6.1.2.1.25.4.2.1.2 | 系统运行的进程列表 | hrSWRunName       | WALK |
+| .1.3.6.1.2.1.25.6.3.1.2 | 系统安装的软件列表 | hrSWInstalledName | WALK |
 
-| 网络接口  OID        | 描述                         | 备注          | 请求方式 |
-|----------------------|----------------------------|---------------|----------|
-| .1.3.6.1.2.1.2.1.0   | 网络接口的数目               | IfNumber      | GET      |
-| .1.3.6.1.2.1.2.2.1.2 | 网络接口信息描述             | IfDescr       | WALK     |
-| .1.3.6.1.2.1.2.2.1.3 | 网络接口类型                 | IfType        | WALK     |
-| .1.3.6.1.2.1.2.2.1.4 | 接口收发的最大IP数据报[BYTE] | IfMTU         | WALK     |
-| .1.3.6.1.2.1.2.2.1.5 | 接口当前带宽[bps]            | IfSpeed       | WALK     |
-| .1.3.6.1.2.1.2.2.1.6 | 接口的物理地址               | IfPhysAddress | WALK     |
-| .1.3.6.1.2.1.2.2.1.8  |   接口当前操作状态[up|down]   |    IfOperStatus     |        WALK         |
-| .1.3.6.1.2.1.2.2.1.10 |       接口收到的字节数        |      IfInOctet      |        WALK         |
-| .1.3.6.1.2.1.2.2.1.16 |       接口发送的字节数        |     IfOutOctet      |        WALK         |
-| .1.3.6.1.2.1.2.2.1.11 |      接口收到的数据包个数       |    IfInUcastPkts    |        WALK         |
-| .1.3.6.1.2.1.2.2.1.17 |      接口发送的数据包个数       |   IfOutUcastPkts    |        WALK         |
+| 网络接口  OID             | 描述                 | 备注             | 请求方式         |
+|-----------------------|--------------------|----------------|--------------|
+| .1.3.6.1.2.1.2.1.0    | 网络接口的数目            | IfNumber       | GET          |
+| .1.3.6.1.2.1.2.2.1.2  | 网络接口信息描述           | IfDescr        | WALK         |
+| .1.3.6.1.2.1.2.2.1.3  | 网络接口类型             | IfType         | WALK         |
+| .1.3.6.1.2.1.2.2.1.4  | 接口收发的最大IP数据报[BYTE] | IfMTU          | WALK         |
+| .1.3.6.1.2.1.2.2.1.5  | 接口当前带宽[bps]        | IfSpeed        | WALK         |
+| .1.3.6.1.2.1.2.2.1.6  | 接口的物理地址            | IfPhysAddress  | WALK         |
+| .1.3.6.1.2.1.2.2.1.8  | 接口当前操作状态[up        | down]          | IfOperStatus |        WALK         |
+| .1.3.6.1.2.1.2.2.1.10 | 接口收到的字节数           | IfInOctet      | WALK         |
+| .1.3.6.1.2.1.2.2.1.16 | 接口发送的字节数           | IfOutOctet     | WALK         |
+| .1.3.6.1.2.1.2.2.1.11 | 接口收到的数据包个数         | IfInUcastPkts  | WALK         |
+| .1.3.6.1.2.1.2.2.1.17 | 接口发送的数据包个数         | IfOutUcastPkts | WALK         |
 
-| CPU及负载 OID              | 描述                           | 备注              | 请求方式 |
-|----------------------------|--------------------------------|-------------------|----------|
-| .1.3.6.1.4.1.2021.11.9.0   | 用户CPU百分比                  | ssCpuUser         | GET      |
-| .1.3.6.1.4.1.2021.11.10.0  | 系统CPU百分比                  | ssCpuSystem       | GET      |
-| .1.3.6.1.4.1.2021.11.11.0  | 空闲CPU百分比                  | ssCpuIdle         | GET      |
-| .1.3.6.1.4.1.2021.11.50.0  | 原始用户CPU使用时间            | ssCpuRawUser      | GET      |
-| .1.3.6.1.4.1.2021.11.51.0  | 原始nice占用时间               | ssCpuRawNice      | GET      |
-| .1.3.6.1.4.1.2021.11.52.0  | 原始系统CPU使用时间            | ssCpuRawSystem.   | GET      |
-| .1.3.6.1.4.1.2021.11.53.0  | 原始CPU空闲时间                | ssCpuRawIdle      | GET      |
-| .1.3.6.1.2.1.25.3.3.1.2    | CPU的当前负载，N个核就有N个负载 | hrProcessorLoad   | WALK     |
-| .1.3.6.1.4.1.2021.11.3.0   | -                              | ssSwapIn          | GET      |
-| .1.3.6.1.4.1.2021.11.4.0   | -                              | SsSwapOut         | GET      |
-| .1.3.6.1.4.1.2021.11.5.0   | -                              | ssIOSent          | GET      |
-| .1.3.6.1.4.1.2021.11.6.0   | -                              | ssIOReceive       | GET      |
-| .1.3.6.1.4.1.2021.11.7.0   | -                              | ssSysInterrupts   | GET      |
-| .1.3.6.1.4.1.2021.11.8.0   | -                              | ssSysContext      | GET      |
-| .1.3.6.1.4.1.2021.11.54.0  | -                              | ssCpuRawWait      | GET      |
-| .1.3.6.1.4.1.2021.11.56.0  | -                              | ssCpuRawInterrupt | GET      |
-| .1.3.6.1.4.1.2021.11.57.0  | -                              | ssIORawSent       | GET      |
-| .1.3.6.1.4.1.2021.11.58.0  | -                              | ssIORawReceived   | GET      |
-| .1.3.6.1.4.1.2021.11.59.0  | -                              | ssRawInterrupts   | GET      |
-| .1.3.6.1.4.1.2021.11.60.0  | -                              | ssRawContexts     | GET      |
-| .1.3.6.1.4.1.2021.11.61.0  | -                              | ssCpuRawSoftIRQ   | GET      |
-| .1.3.6.1.4.1.2021.11.62.0  | -                              | ssRawSwapIn.      | GET      |
-| .1.3.6.1.4.1.2021.11.63.0  | -                              | ssRawSwapOut      | GET      |
-| .1.3.6.1.4.1.2021.10.1.3.1 | -                              | Load5             | GET      |
-| .1.3.6.1.4.1.2021.10.1.3.2 | -                              | Load10            | GET      |
-| .1.3.6.1.4.1.2021.10.1.3.3 | -                              | Load15            | GET      |
+| CPU及负载 OID                 | 描述                 | 备注                | 请求方式 |
+|----------------------------|--------------------|-------------------|------|
+| .1.3.6.1.4.1.2021.11.9.0   | 用户CPU百分比           | ssCpuUser         | GET  |
+| .1.3.6.1.4.1.2021.11.10.0  | 系统CPU百分比           | ssCpuSystem       | GET  |
+| .1.3.6.1.4.1.2021.11.11.0  | 空闲CPU百分比           | ssCpuIdle         | GET  |
+| .1.3.6.1.4.1.2021.11.50.0  | 原始用户CPU使用时间        | ssCpuRawUser      | GET  |
+| .1.3.6.1.4.1.2021.11.51.0  | 原始nice占用时间         | ssCpuRawNice      | GET  |
+| .1.3.6.1.4.1.2021.11.52.0  | 原始系统CPU使用时间        | ssCpuRawSystem.   | GET  |
+| .1.3.6.1.4.1.2021.11.53.0  | 原始CPU空闲时间          | ssCpuRawIdle      | GET  |
+| .1.3.6.1.2.1.25.3.3.1.2    | CPU的当前负载，N个核就有N个负载 | hrProcessorLoad   | WALK |
+| .1.3.6.1.4.1.2021.11.3.0   | -                  | ssSwapIn          | GET  |
+| .1.3.6.1.4.1.2021.11.4.0   | -                  | SsSwapOut         | GET  |
+| .1.3.6.1.4.1.2021.11.5.0   | -                  | ssIOSent          | GET  |
+| .1.3.6.1.4.1.2021.11.6.0   | -                  | ssIOReceive       | GET  |
+| .1.3.6.1.4.1.2021.11.7.0   | -                  | ssSysInterrupts   | GET  |
+| .1.3.6.1.4.1.2021.11.8.0   | -                  | ssSysContext      | GET  |
+| .1.3.6.1.4.1.2021.11.54.0  | -                  | ssCpuRawWait      | GET  |
+| .1.3.6.1.4.1.2021.11.56.0  | -                  | ssCpuRawInterrupt | GET  |
+| .1.3.6.1.4.1.2021.11.57.0  | -                  | ssIORawSent       | GET  |
+| .1.3.6.1.4.1.2021.11.58.0  | -                  | ssIORawReceived   | GET  |
+| .1.3.6.1.4.1.2021.11.59.0  | -                  | ssRawInterrupts   | GET  |
+| .1.3.6.1.4.1.2021.11.60.0  | -                  | ssRawContexts     | GET  |
+| .1.3.6.1.4.1.2021.11.61.0  | -                  | ssCpuRawSoftIRQ   | GET  |
+| .1.3.6.1.4.1.2021.11.62.0  | -                  | ssRawSwapIn.      | GET  |
+| .1.3.6.1.4.1.2021.11.63.0  | -                  | ssRawSwapOut      | GET  |
+| .1.3.6.1.4.1.2021.10.1.3.1 | -                  | Load5             | GET  |
+| .1.3.6.1.4.1.2021.10.1.3.2 | -                  | Load10            | GET  |
+| .1.3.6.1.4.1.2021.10.1.3.3 | -                  | Load15            | GET  |
 
-| 内存及磁盘    OID        | 描述                                    | 备注                     | 请求方式 |
-|--------------------------|-----------------------------------------|--------------------------|----------|
-| .1.3.6.1.2.1.25.2.2.0    | 获取内存大小                            | hrMemorySize             | GET      |
-| .1.3.6.1.2.1.25.2.3.1.1  | 存储设备编号                            | hrStorageIndex           | WALK     |
-| .1.3.6.1.2.1.25.2.3.1.2  | 存储设备类型                            | hrStorageType[OID]       | WALK     |
-| .1.3.6.1.2.1.25.2.3.1.3  | 存储设备描述                            | hrStorageDescr           | WALK     |
-| .1.3.6.1.2.1.25.2.3.1.4  | 簇的大小                                | hrStorageAllocationUnits | WALK     |
-| .1.3.6.1.2.1.25.2.3.1.5  | 簇的的数目                              | hrStorageSize            | WALK     |
-| .1.3.6.1.2.1.25.2.3.1.6  | 使用多少，跟总容量相除就是占用率         | hrStorageUsed            | WALK     |
-| .1.3.6.1.4.1.2021.4.3.0  | Total Swap Size(虚拟内存)               | memTotalSwap             | GET      |
-| .1.3.6.1.4.1.2021.4.4.0  | Available Swap Space                    | memAvailSwap             | GET      |
-| .1.3.6.1.4.1.2021.4.5.0  | Total RAM in machine                    | memTotalReal             | GET      |
-| .1.3.6.1.4.1.2021.4.6.0  | Total RAM used                          | memAvailReal             | GET      |
-| .1.3.6.1.4.1.2021.4.11.0 | Total RAM Free                          | memTotalFree             | GET      |
-| .1.3.6.1.4.1.2021.4.13.0 | Total RAM Shared                        | memShared                | GET      |
-| .1.3.6.1.4.1.2021.4.14.0 | Total RAM Buffered                      | memBuffer                | GET      |
-| .1.3.6.1.4.1.2021.4.15.0 | Total Cached Memory                     | memCached                | GET      |
-| .1.3.6.1.4.1.2021.9.1.2  | Path where the disk is mounted          | dskPath                  | WALK     |
-| .1.3.6.1.4.1.2021.9.1.3  | Path of the device for the partition    | dskDevice                | WALK     |
-| .1.3.6.1.4.1.2021.9.1.6  | Total size of the disk/partion (kBytes) | dskTotal                 | WALK     |
-| .1.3.6.1.4.1.2021.9.1.7  | Available space on the disk             | dskAvail                 | WALK     |
-| .1.3.6.1.4.1.2021.9.1.8  | Used space on the disk                  | dskUsed                  | WALK     |
-| .1.3.6.1.4.1.2021.9.1.9  | Percentage of space used on disk        | dskPercent               | WALK     |
-| .1.3.6.1.4.1.2021.9.1.10 | Percentage of inodes used on disk       | dskPercentNode           | WALK     |
+| 内存及磁盘    OID             | 描述                                      | 备注                       | 请求方式 |
+|--------------------------|-----------------------------------------|--------------------------|------|
+| .1.3.6.1.2.1.25.2.2.0    | 获取内存大小                                  | hrMemorySize             | GET  |
+| .1.3.6.1.2.1.25.2.3.1.1  | 存储设备编号                                  | hrStorageIndex           | WALK |
+| .1.3.6.1.2.1.25.2.3.1.2  | 存储设备类型                                  | hrStorageType[OID]       | WALK |
+| .1.3.6.1.2.1.25.2.3.1.3  | 存储设备描述                                  | hrStorageDescr           | WALK |
+| .1.3.6.1.2.1.25.2.3.1.4  | 簇的大小                                    | hrStorageAllocationUnits | WALK |
+| .1.3.6.1.2.1.25.2.3.1.5  | 簇的的数目                                   | hrStorageSize            | WALK |
+| .1.3.6.1.2.1.25.2.3.1.6  | 使用多少，跟总容量相除就是占用率                        | hrStorageUsed            | WALK |
+| .1.3.6.1.4.1.2021.4.3.0  | Total Swap Size(虚拟内存)                   | memTotalSwap             | GET  |
+| .1.3.6.1.4.1.2021.4.4.0  | Available Swap Space                    | memAvailSwap             | GET  |
+| .1.3.6.1.4.1.2021.4.5.0  | Total RAM in machine                    | memTotalReal             | GET  |
+| .1.3.6.1.4.1.2021.4.6.0  | Total RAM used                          | memAvailReal             | GET  |
+| .1.3.6.1.4.1.2021.4.11.0 | Total RAM Free                          | memTotalFree             | GET  |
+| .1.3.6.1.4.1.2021.4.13.0 | Total RAM Shared                        | memShared                | GET  |
+| .1.3.6.1.4.1.2021.4.14.0 | Total RAM Buffered                      | memBuffer                | GET  |
+| .1.3.6.1.4.1.2021.4.15.0 | Total Cached Memory                     | memCached                | GET  |
+| .1.3.6.1.4.1.2021.9.1.2  | Path where the disk is mounted          | dskPath                  | WALK |
+| .1.3.6.1.4.1.2021.9.1.3  | Path of the device for the partition    | dskDevice                | WALK |
+| .1.3.6.1.4.1.2021.9.1.6  | Total size of the disk/partion (kBytes) | dskTotal                 | WALK |
+| .1.3.6.1.4.1.2021.9.1.7  | Available space on the disk             | dskAvail                 | WALK |
+| .1.3.6.1.4.1.2021.9.1.8  | Used space on the disk                  | dskUsed                  | WALK |
+| .1.3.6.1.4.1.2021.9.1.9  | Percentage of space used on disk        | dskPercent               | WALK |
+| .1.3.6.1.4.1.2021.9.1.10 | Percentage of inodes used on disk       | dskPercentNode           | WALK |
 
 ### OID要不要以点开头
 
@@ -356,6 +356,7 @@ In the examples above both '.1.3.6.1.2.1.1.3.0' and '1.3.0' are equivalent to 's
 1. `sudo -i`
 2. `vi /etc/snmp/snmpd.conf`
 3. replace
+  
   ```
   com2sec local localhost COMMUNITY
   com2sec mynetwork NETWORK/24 COMMUNITY
@@ -366,11 +367,13 @@ In the examples above both '.1.3.6.1.2.1.1.3.0' and '1.3.0' are equivalent to 's
   com2sec local localhost private
   com2sec mynetwork NETWORK/24 public
   ```
-4. replace `rocommunity public default .1.3.6.1.2.1.1.4` with `rocommunity public default .1`
-5. uncomment `#rwcommunity private`
-6. `launchctl unload /System/Library/LaunchDaemons/org.net-snmp.snmpd.plist`
-7. `launchctl load -w /System/Library/LaunchDaemons/org.net-snmp.snmpd.plist`
-8. test
+
+1. replace `rocommunity public default .1.3.6.1.2.1.1.4` with `rocommunity public default .1`
+2. uncomment `#rwcommunity private`
+3. `launchctl unload /System/Library/LaunchDaemons/org.net-snmp.snmpd.plist`
+4. `launchctl load -w /System/Library/LaunchDaemons/org.net-snmp.snmpd.plist`
+5. test
+
   ```sh
   $ snmp -m get -t 127.0.0.1 -o 1.3.6.1.4.1.2021.x -x 11.9.0,4.5.0,4.6.0,4.14.0,9.1.6.1,9.1.8.1,9.1.7.1
   [0][UCD-SNMP-MIB::ssCpuUser.0][.1.3.6.1.4.1.2021.11.9.0] = Integer: 3

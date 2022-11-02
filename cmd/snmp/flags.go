@@ -69,7 +69,7 @@ func (o *Options) ParseFlags() {
 
 	if strings.Contains(o.Verbose, "debug") {
 		o.Logger = log.New(log.Writer(), log.Prefix(), log.Flags())
-		log.Printf("Oids:%v", o.Oids)
+		log.Printf("Oids: %v", o.Oids)
 	}
 }
 
