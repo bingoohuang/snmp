@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"strings"
 
 	"github.com/bingoohuang/snmp/pkg/snmpp"
 	g "github.com/gosnmp/gosnmp"
@@ -47,14 +46,9 @@ func (o *Options) do(target string) {
 }
 
 func (o *Options) createAgent(target string) Target {
-	gs := o.CreateGoSNMP(o.Logger != nil)
+	gs := o.CreateGoSNMP(target, o.Logger != nil)
 	if o.Logger != nil {
 		gs.Logger = *o.Logger
-	}
-
-	target = o.parseCommunity(target, gs)
-	if err := snmpp.SetTarget(gs, target); err != nil {
-		log.Fatalf("set target failed: %v", err)
 	}
 
 	return Target{
@@ -62,17 +56,6 @@ func (o *Options) createAgent(target string) Target {
 		target:  refineTargetForOutput(gs),
 		Options: o,
 	}
-}
-
-func (o *Options) parseCommunity(target string, gs *g.GoSNMP) string {
-	if p := strings.LastIndex(target, "@"); p < 0 {
-		gs.Community = o.Community
-	} else {
-		gs.Community = target[:p]
-		target = target[p+1:]
-	}
-
-	return target
 }
 
 func refineTargetForOutput(gs *g.GoSNMP) string {

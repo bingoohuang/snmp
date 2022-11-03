@@ -45,7 +45,7 @@ const (
 	DefaultCommunity = "public"
 )
 
-func (o *ClientConfig) CreateGoSNMP(verbose bool) *g.GoSNMP {
+func (o *ClientConfig) CreateGoSNMP(target string, verbose bool) *g.GoSNMP {
 	gs := &g.GoSNMP{
 		Port:               DefaultSnmpPort,
 		Transport:          "udp",
@@ -80,7 +80,23 @@ func (o *ClientConfig) CreateGoSNMP(verbose bool) *g.GoSNMP {
 		setupVerbose(gs)
 	}
 
+	target = o.parseCommunity(target, gs)
+	if err := setTarget(gs, target); err != nil {
+		log.Fatalf("set target failed: %v", err)
+	}
+
 	return gs
+}
+
+func (o *ClientConfig) parseCommunity(target string, gs *g.GoSNMP) string {
+	if p := strings.LastIndex(target, "@"); p < 0 {
+		gs.Community = o.Community
+	} else {
+		gs.Community = target[:p]
+		target = target[p+1:]
+	}
+
+	return target
 }
 
 func setupVerbose(gs *g.GoSNMP) {
@@ -172,9 +188,9 @@ func (o *ClientConfig) SetVersion3Parameters(gs *g.GoSNMP) {
 	sp.AuthoritativeEngineTime = uint32(o.EngineTime)
 }
 
-// SetTarget takes a url (scheme://host:port) and sets the GoSNMP struct's corresponding fields.
+// setTarget takes a url (scheme://host:port) and sets the GoSNMP struct's corresponding fields.
 // This shouldn't be called after using the wrapped GoSNMP struct, for example after connecting.
-func SetTarget(gs *g.GoSNMP, target string) error {
+func setTarget(gs *g.GoSNMP, target string) error {
 	if !strings.Contains(target, "://") {
 		target = "udp://" + target
 	}
