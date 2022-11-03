@@ -1,8 +1,7 @@
 module github.com/bingoohuang/snmp
 
-go 1.15
+go 1.19
 
-require (
-	github.com/davecgh/go-spew v1.1.1 // indirect
-	github.com/gosnmp/gosnmp v1.29.1-0.20210104142916-8d442760d545
-)
+require github.com/gosnmp/gosnmp v1.35.0
+
+require github.com/bingoohuang/gg v0.0.0-20221024090922-f7f98394c770

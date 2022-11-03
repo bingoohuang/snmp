@@ -16,7 +16,7 @@ func (o *Options) trap() {
 	tl.OnNewTrap = o.trapHandler
 	tl.Params = g.Default
 	if o.Logger != nil {
-		tl.Params.Logger = o.Logger
+		tl.Params.Logger = *o.Logger
 	}
 
 	if err := tl.Listen(o.TrapAddr); err != nil {

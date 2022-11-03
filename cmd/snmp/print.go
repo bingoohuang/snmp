@@ -17,7 +17,7 @@ func (o *Options) printPdu(typ, target string, i int, pdu g.SnmpPDU) {
 		typ = ""
 	}
 
-	if len(o.Targets) > 1 {
+	if len(o.Agents) > 1 {
 		target = "[" + target + "]"
 	} else {
 		target = ""

@@ -420,5 +420,65 @@ http://www.sustworks.com/rw_site/download.php
 
 ![image](https://user-images.githubusercontent.com/1940588/104808043-90691100-581e-11eb-8b03-e1dc01245c83.png)
 
+## logs
 
+1. [gosnmpd](https://github.com/bingoohuang/snmpd)
 
+```log
+$ gosnmpd run
+```
+
+```log
+$ snmp -m get -t 127.0.0.1:1161 -version 3 -secName testuser -authPassword testauth -privPassword testpriv -privProtocol DES -authProtocol MD5 -secLevel authPriv -contextName public -o 1.3.6.1.4.1.2021.9.1.6.1
+[0][UCD-SNMP-MIB::dskTotal.1][.1.3.6.1.4.1.2021.9.1.6.1] => Integer: 80569
+```
+
+```log
+$ snmp -m walk -t 127.0.0.1:1161 -version 3 -secName testuser -authPassword testauth -privPassword testpriv -privProtocol DES -authProtocol MD5 -secLevel authPriv -contextName public -o 1.3.6.1.4.1.2021
+[0][UCD-SNMP-MIB::memIndex][.1.3.6.1.4.1.2021.4.1] => Integer: 1
+[1][UCD-SNMP-MIB::memErrorName][.1.3.6.1.4.1.2021.4.2] => OctetString: swap
+[2][UCD-SNMP-MIB::memTotalSwap][.1.3.6.1.4.1.2021.4.3] => Integer: 0
+[3][UCD-SNMP-MIB::memAvailSwap][.1.3.6.1.4.1.2021.4.4] => Integer: 0
+[4][UCD-SNMP-MIB::memTotalReal][.1.3.6.1.4.1.2021.4.5] => Integer: 3825904
+[5][UCD-SNMP-MIB::memAvailReal][.1.3.6.1.4.1.2021.4.6] => Integer: 3122672
+[6][UCD-SNMP-MIB::memTotalFree][.1.3.6.1.4.1.2021.4.11] => Integer: 3122672
+[7][UCD-SNMP-MIB::memMinimumSwap][.1.3.6.1.4.1.2021.4.12] => Integer: 0
+[8][UCD-SNMP-MIB::memBuffer][.1.3.6.1.4.1.2021.4.14] => Integer: 120372
+[9][UCD-SNMP-MIB::memCached][.1.3.6.1.4.1.2021.4.15] => Integer: 2906880
+[10][UCD-SNMP-MIB::memSwapError][.1.3.6.1.4.1.2021.4.100] => Integer: 0
+[11][UCD-SNMP-MIB::memSwapErrorMsg][.1.3.6.1.4.1.2021.4.101] => OctetString:
+[12][UCD-SNMP-MIB::dskIndex.1][.1.3.6.1.4.1.2021.9.1.1.1] => Integer: 1
+[13][UCD-SNMP-MIB::dskPath.1][.1.3.6.1.4.1.2021.9.1.2.1] => OctetString: /
+[14][UCD-SNMP-MIB::dskDevice.1][.1.3.6.1.4.1.2021.9.1.3.1] => OctetString: /
+[15][UCD-SNMP-MIB::dskTotal.1][.1.3.6.1.4.1.2021.9.1.6.1] => Integer: 80569
+[16][UCD-SNMP-MIB::dskAvail.1][.1.3.6.1.4.1.2021.9.1.7.1] => Integer: 39829
+[17][UCD-SNMP-MIB::dskUsed.1][.1.3.6.1.4.1.2021.9.1.8.1] => Integer: 37365
+[18][UCD-SNMP-MIB::dskPercent.1][.1.3.6.1.4.1.2021.9.1.9.1] => Integer: 48
+[19][UCD-SNMP-MIB::laIndex.1][.1.3.6.1.4.1.2021.10.1.1.1] => Integer: 1
+[20][UCD-SNMP-MIB::laIndex.2][.1.3.6.1.4.1.2021.10.1.1.2] => Integer: 2
+[21][UCD-SNMP-MIB::laIndex.3][.1.3.6.1.4.1.2021.10.1.1.3] => Integer: 3
+[22][UCD-SNMP-MIB::laNames.1][.1.3.6.1.4.1.2021.10.1.2.1] => OctetString: Load-1
+[23][UCD-SNMP-MIB::laNames.2][.1.3.6.1.4.1.2021.10.1.2.2] => OctetString: Load-5
+[24][UCD-SNMP-MIB::laNames.3][.1.3.6.1.4.1.2021.10.1.2.3] => OctetString: Load-15
+[25][UCD-SNMP-MIB::laLoad.1][.1.3.6.1.4.1.2021.10.1.3.1] => OctetString: 0.03
+[26][UCD-SNMP-MIB::laLoad.2][.1.3.6.1.4.1.2021.10.1.3.2] => OctetString: 0.03
+[27][UCD-SNMP-MIB::laLoad.3][.1.3.6.1.4.1.2021.10.1.3.3] => OctetString: 0.01
+[28][UCD-SNMP-MIB::laLoadInt.1][.1.3.6.1.4.1.2021.10.1.5.1] => Integer: 0
+[29][UCD-SNMP-MIB::laLoadInt.2][.1.3.6.1.4.1.2021.10.1.5.2] => Integer: 0
+[30][UCD-SNMP-MIB::laLoadInt.3][.1.3.6.1.4.1.2021.10.1.5.3] => Integer: 0
+[31][UCD-SNMP-MIB::ssIndex][.1.3.6.1.4.1.2021.11.1] => Integer: 0
+[32][UCD-SNMP-MIB::ssErrorName][.1.3.6.1.4.1.2021.11.2] => OctetString: systemStats
+[33][UCD-SNMP-MIB::ssCpuRawUser][.1.3.6.1.4.1.2021.11.50] => Counter32: 22918
+[34][UCD-SNMP-MIB::ssCpuRawNice][.1.3.6.1.4.1.2021.11.51] => Counter32: 617
+[35][UCD-SNMP-MIB::ssCpuRawSystem][.1.3.6.1.4.1.2021.11.52] => Counter32: 20240
+[36][UCD-SNMP-MIB::ssCpuRawIdle][.1.3.6.1.4.1.2021.11.53] => Counter32: 17642486
+[37][UCD-SNMP-MIB::ssCpuRawWait][.1.3.6.1.4.1.2021.11.54] => Counter32: 3169
+[38][UCD-SNMP-MIB::ssCpuRawInterrupt][.1.3.6.1.4.1.2021.11.56] => Counter32: 0
+[39][UCD-SNMP-MIB::ssIORawSent][.1.3.6.1.4.1.2021.11.57] => Counter32: 26512384
+[40][UCD-SNMP-MIB::ssIORawReceived][.1.3.6.1.4.1.2021.11.58] => Counter32: 575607
+[41][UCD-SNMP-MIB::ssRawInterrupts][.1.3.6.1.4.1.2021.11.59] => Counter32: 1080348069
+[42][UCD-SNMP-MIB::ssRawContexts][.1.3.6.1.4.1.2021.11.60] => Counter32: 1547188702
+[43][UCD-SNMP-MIB::ssCpuRawSoftIRQ][.1.3.6.1.4.1.2021.11.61] => Counter32: 537
+[44][UCD-SNMP-MIB::ssCpuRawSteal][.1.3.6.1.4.1.2021.11.64] => Counter32: 0
+[45][UCD-SNMP-MIB::ssCpuRawGuest][.1.3.6.1.4.1.2021.11.65] => Counter32: 0
+```
