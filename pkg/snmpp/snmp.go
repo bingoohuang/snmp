@@ -8,7 +8,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/bingoohuang/gg/pkg/ss"
 	g "github.com/gosnmp/gosnmp"
 )
 
@@ -45,13 +44,29 @@ const (
 	DefaultCommunity = "public"
 )
 
+func If[T any](b bool, s1, s2 T) T {
+	if b {
+		return s1
+	}
+
+	return s2
+}
+
+func Or(a, b string) string {
+	if a == "" {
+		return b
+	}
+
+	return a
+}
+
 func (o *ClientConfig) CreateGoSNMP(target string, verbose bool) *g.GoSNMP {
 	gs := &g.GoSNMP{
 		Port:               DefaultSnmpPort,
 		Transport:          "udp",
 		Version:            g.Version2c,
-		Retries:            ss.Ifi(o.Retries <= 0, 3, o.Retries),
-		MaxRepetitions:     uint32(ss.Ifi(o.MaxRepetitions <= 0, 10, o.MaxRepetitions)),
+		Retries:            If(o.Retries <= 0, 3, o.Retries),
+		MaxRepetitions:     uint32(If(o.MaxRepetitions <= 0, 10, o.MaxRepetitions)),
 		Timeout:            time.Duration(10) * time.Second,
 		ExponentialTimeout: false,
 		MaxOids:            g.MaxOids,
@@ -73,7 +88,7 @@ func (o *ClientConfig) CreateGoSNMP(target string, verbose bool) *g.GoSNMP {
 	if o.Version == 3 {
 		o.SetVersion3Parameters(gs)
 	} else {
-		gs.Community = ss.Or(o.Community, DefaultCommunity)
+		gs.Community = Or(o.Community, DefaultCommunity)
 	}
 
 	if verbose {
@@ -108,7 +123,7 @@ func setupVerbose(gs *g.GoSNMP) {
 
 func (o *ClientConfig) SetVersion3Parameters(gs *g.GoSNMP) {
 	if o.ContextName != "none" {
-		gs.ContextName = ss.Or(o.ContextName, "public")
+		gs.ContextName = Or(o.ContextName, "public")
 	}
 
 	sp := &g.UsmSecurityParameters{}
