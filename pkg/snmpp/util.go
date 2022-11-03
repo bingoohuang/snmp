@@ -21,16 +21,18 @@ func userMibDir() (string, error) {
 	return filepath.Abs(filepath.Join(usr.HomeDir, ".snmp", "mibs"))
 }
 
-func LoadMibs() *smi.MIB {
+func LoadMibs(verbose bool) *smi.MIB {
 	var dirs []string
 
-	dirs = addDir("/usr/share/snmp/mibs", dirs)
+	dirs = addDir("/usr/share/snmp/mibs", dirs, verbose)
 
 	userDir, err := userMibDir()
 	if err != nil {
-		log.Printf("W! failed to read %s, error: %v", "~/.snmp/mibs", err)
+		if verbose {
+			log.Printf("W! failed to read %s, error: %v", "~/.snmp/mibs", err)
+		}
 	} else {
-		dirs = addDir(userDir, dirs)
+		dirs = addDir(userDir, dirs, false)
 	}
 
 	mib := smi.NewMIB(dirs...)
@@ -41,12 +43,16 @@ func LoadMibs() *smi.MIB {
 	return mib
 }
 
-func addDir(sysMibDir string, dirs []string) []string {
+func addDir(sysMibDir string, dirs []string, verbose bool) []string {
 	d, err := os.Stat(sysMibDir)
 	if err != nil {
-		log.Printf("W! failed to read %s, error: %v", sysMibDir, err)
+		if verbose {
+			log.Printf("W! failed to read %s, error: %v", sysMibDir, err)
+		}
 	} else if !d.IsDir() {
-		log.Printf("W! %s is not a directory", sysMibDir)
+		if verbose {
+			log.Printf("W! %s is not a directory", sysMibDir)
+		}
 	} else {
 		dirs = append(dirs, sysMibDir)
 	}

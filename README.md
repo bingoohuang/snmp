@@ -422,19 +422,19 @@ http://www.sustworks.com/rw_site/download.php
 
 ## logs
 
-1. [gosnmpd](https://github.com/bingoohuang/snmpd)
+1. [gosnmpd](https://github.com/bingoohuang/gosnmpd)
 
 ```log
 $ gosnmpd run
 ```
 
 ```log
-$ snmp -m get -t 127.0.0.1:1161 -version 3 -secName testuser -authPassword testauth -privPassword testpriv -privProtocol DES -authProtocol MD5 -secLevel authPriv -contextName public -o 1.3.6.1.4.1.2021.9.1.6.1
+$ snmp -m get -t 127.0.0.1:1161 -version 3 -userName testuser -authPassword testauth -authProtocol MD5 -contextName public -o 1.3.6.1.4.1.2021.9.1.6.1
 [0][UCD-SNMP-MIB::dskTotal.1][.1.3.6.1.4.1.2021.9.1.6.1] => Integer: 80569
 ```
 
 ```log
-$ snmp -m walk -t 127.0.0.1:1161 -version 3 -secName testuser -authPassword testauth -privPassword testpriv -privProtocol DES -authProtocol MD5 -secLevel authPriv -contextName public -o 1.3.6.1.4.1.2021
+$ snmp -m walk -t 127.0.0.1:1161 -version 3 -userName testuser -authPassword testauth -authProtocol MD5 -contextName public -o 1.3.6.1.4.1.2021
 [0][UCD-SNMP-MIB::memIndex][.1.3.6.1.4.1.2021.4.1] => Integer: 1
 [1][UCD-SNMP-MIB::memErrorName][.1.3.6.1.4.1.2021.4.2] => OctetString: swap
 [2][UCD-SNMP-MIB::memTotalSwap][.1.3.6.1.4.1.2021.4.3] => Integer: 0

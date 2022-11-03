@@ -3,7 +3,6 @@ package main
 import (
 	"flag"
 	"fmt"
-	"github.com/gosnmp/gosnmp"
 	"log"
 	"os"
 	"reflect"
@@ -13,38 +12,11 @@ import (
 	"github.com/bingoohuang/snmp/pkg/smi"
 	"github.com/bingoohuang/snmp/pkg/snmpp"
 	"github.com/bingoohuang/snmp/pkg/util"
+	"github.com/gosnmp/gosnmp"
 )
 
-type ClientConfig struct {
-	Timeout time.Duration `usage:"Timeout to wait for a response."`
-
-	Retries              int    `usage:"Number of retries to attempt."`
-	Version              int    `usage:"SNMP version; can be 1, 2, or 3."`
-	UnconnectedUDPSocket bool   `usage:"Unconnected UDP socket When true, SNMP responses are accepted from any address not just the requested address. This can be useful when gathering from redundant/failover systems."`
-	Community            string `usage:"SNMP community string, Parameters for Version 1 & 2"`
-
-	MaxRepetitions int `usage:"The GETBULK max-repetitions parameter, Parameters for Version 2 & 3"`
-
-	// Parameters for Version 3
-	// SNMPv3 authentication and encryption options.
-
-	ContextName  string `usage:"Context Name. for SNMPv3"`
-	SecLevel     string `usage:"Security Level; one of noAuthNoPriv, authNoPriv, or authPriv. for SNMPv3"`
-	SecName      string `usage:"Security Name. for SNMPv3"`
-	AuthProtocol string `usage:"Authentication protocol; one of MD5, SHA, SHA224, SHA256, SHA384, SHA512. for SNMPv3"`
-	AuthPassword string `usage:"Authentication password"`
-	// Protocols "AES192", "AES192", "AES256", and "AES256C" require the underlying net-snmp tools
-	// to be compiled with --enable-blumenthal-aes (http://www.net-snmp.org/docs/INSTALL.html)
-	PrivProtocol string `usage:"Privacy protocol used for encrypted messages; one of DES, AES, AES192, AES192C, AES256, AES256C"`
-	PrivPassword string `usage:"Privacy password used for encrypted messages"`
-
-	EngineID    string
-	EngineBoots int
-	EngineTime  int
-}
-
 type Options struct {
-	ClientConfig
+	snmpp.ClientConfig
 
 	Agents  arrayFlags
 	Oids    arrayFlags
@@ -65,9 +37,7 @@ func (i *arrayFlags) Set(value string) error {
 	return nil
 }
 
-var (
-	timeDurationType = reflect.TypeOf(time.Duration(0))
-)
+var timeDurationType = reflect.TypeOf(time.Duration(0))
 
 type ArrayFlags struct {
 	Value string
@@ -129,14 +99,15 @@ func (o *Options) ParseFlags() {
 
 	flag.Parse()
 
-	o.mib = snmpp.LoadMibs()
+	debug := strings.Contains(o.Verbose, "debug")
+	o.mib = snmpp.LoadMibs(debug)
 	o.Oids = append(o.Oids, flag.Args()...)
 	isTranslate := o.Operate == "translate"
 	o.Oids = interpolate(isTranslate, o.mib, o.Oids, util.ExpandNums(x), "x")
 	o.Oids = interpolate(isTranslate, o.mib, o.Oids, util.ExpandNums(y), "y")
 	o.Oids = interpolate(isTranslate, o.mib, o.Oids, util.ExpandNums(z), "z")
 
-	if strings.Contains(o.Verbose, "debug") {
+	if debug {
 		logger := gosnmp.NewLogger(log.New(log.Writer(), log.Prefix(), log.Flags()))
 		o.Logger = &logger
 		log.Printf("Oids: %v", o.Oids)
