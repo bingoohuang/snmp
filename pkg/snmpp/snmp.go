@@ -14,8 +14,8 @@ import (
 type ClientConfig struct {
 	Timeout time.Duration `toml:"timeout" usage:"Timeout to wait for a response."`
 
-	Retries              int    `toml:"retries" usage:"Number of retries to attempt."`
-	Version              int    `toml:"version" usage:"SNMP version; can be 1, 2, or 3."`
+	Retries              int    `toml:"retries" flag:",r" usage:"Number of retries to attempt."`
+	Version              int    `toml:"version" flag:",v" usage:"SNMP version; can be 1, 2, or 3."`
 	UnconnectedUDPSocket bool   `toml:"unconnected_udp_socket" usage:"Unconnected UDP socket When true, SNMP responses are accepted from any address not just the requested address. This can be useful when gathering from redundant/failover systems."`
 	Community            string `toml:"community" usage:"SNMP community string, Parameters for Version 1 & 2"`
 
@@ -24,15 +24,15 @@ type ClientConfig struct {
 	// Parameters for Version 3
 	// SNMPv3 authentication and encryption options.
 
-	ContextName  string `toml:"context_name" usage:"Context Name. for SNMPv3"`
+	ContextName  string `toml:"context_name" flag:",n" usage:"Context Name. for SNMPv3"`
 	SecLevel     string `toml:"sec_level" usage:"Security Level; one of none, authNoPriv, or authPriv. for SNMPv3"`
-	UserName     string `toml:"user_name" usage:"User Name. for SNMPv3"`
-	AuthProtocol string `toml:"auth_protocol" usage:"Authentication protocol; one of MD5, SHA, SHA224, SHA256, SHA384, SHA512. for SNMPv3"`
-	AuthPassword string `toml:"auth_password" usage:"Authentication password"`
+	UserName     string `toml:"user_name" flag:",u" usage:"User Name. for SNMPv3"`
+	AuthProtocol string `toml:"auth_protocol" flag:",a" usage:"Authentication protocol; one of MD5, SHA, SHA224, SHA256, SHA384, SHA512. for SNMPv3"`
+	AuthPassword string `toml:"auth_password" flag:",A" usage:"Authentication password"`
 	// Protocols "AES192", "AES192", "AES256", and "AES256C" require the underlying net-snmp tools
 	// to be compiled with --enable-blumenthal-aes (http://www.net-snmp.org/docs/INSTALL.html)
 	PrivProtocol string `toml:"priv_protocol" usage:"Privacy protocol used for encrypted messages; one of DES, AES, AES192, AES192C, AES256, AES256C"`
-	PrivPassword string `toml:"priv_password" usage:"Privacy password used for encrypted messages"`
+	PrivPassword string `toml:"priv_password" flag:",X" usage:"Privacy password used for encrypted messages"`
 
 	EngineID    string `toml:"engine_id"`
 	EngineBoots int    `toml:"engine_boots"`

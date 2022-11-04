@@ -385,6 +385,17 @@ In the examples above both '.1.3.6.1.2.1.1.3.0' and '1.3.0' are equivalent to 's
   [6][UCD-SNMP-MIB::dskAvail.1][.1.3.6.1.4.1.2021.9.1.7.1] = Integer: 212321536
   ```
 
+  ```sh
+  $ gosnmpd
+  $ snmp -t 127.0.0.1:1161 --userName testuser --authPassword testauth UCD-SNMP-MIB::dskUsed.1
+  [get][0][UCD-SNMP-MIB::dskUsed.1][.1.3.6.1.4.1.2021.9.1.8.1] => Integer: 222292
+  $ snmp -t 127.0.0.1:1161 -userName testuser -authPassword testauth -o 1.3.6.1.4.1.2021.y -y=4.5 -y=4.6 -o 1.3.6.1.4.1.2021.9.1.z.1 -z=7-8
+  [get][0][UCD-SNMP-MIB::memTotalReal][.1.3.6.1.4.1.2021.4.5] => Integer: 16777216
+  [get][1][UCD-SNMP-MIB::memAvailReal][.1.3.6.1.4.1.2021.4.6] => Integer: 7545060
+  [get][2][UCD-SNMP-MIB::dskAvail.1][.1.3.6.1.4.1.2021.9.1.7.1] => Integer: 16784
+  [get][3][UCD-SNMP-MIB::dskUsed.1][.1.3.6.1.4.1.2021.9.1.8.1] => Integer: 222287
+  ```
+
 ### Mib Browser
 
 MIB浏览器是工程师管理启用SNMP的网络设备和应用程序不可或缺的工具。 它允许用户加载标准的，专有的MIB，甚至一些错误的MIB。 它还允许它们发出SNMP请求以检索代理的数据，或对代理进行更改。 内置陷阱接收器可以根据其规则引擎接收和处理SNMP陷阱。
@@ -429,12 +440,12 @@ $ gosnmpd run
 ```
 
 ```log
-$ snmp -m get -t 127.0.0.1:1161 -version 3 -userName testuser -authPassword testauth -authProtocol MD5 -contextName public -o 1.3.6.1.4.1.2021.9.1.6.1
+$ snmp -m get -t 127.0.0.1:1161 -v 3 --userName testuser --authPassword testauth --authProtocol MD5 --contextName public -o 1.3.6.1.4.1.2021.9.1.6.1
 [0][UCD-SNMP-MIB::dskTotal.1][.1.3.6.1.4.1.2021.9.1.6.1] => Integer: 80569
 ```
 
 ```log
-$ snmp -m walk -t 127.0.0.1:1161 -version 3 -userName testuser -authPassword testauth -authProtocol MD5 -contextName public -o 1.3.6.1.4.1.2021
+$ snmp -m walk -t 127.0.0.1:1161 -v 3 --userName testuser --authPassword testauth --authProtocol MD5 --contextName public -o 1.3.6.1.4.1.2021
 [0][UCD-SNMP-MIB::memIndex][.1.3.6.1.4.1.2021.4.1] => Integer: 1
 [1][UCD-SNMP-MIB::memErrorName][.1.3.6.1.4.1.2021.4.2] => OctetString: swap
 [2][UCD-SNMP-MIB::memTotalSwap][.1.3.6.1.4.1.2021.4.3] => Integer: 0
