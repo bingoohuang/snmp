@@ -40,9 +40,9 @@ func (o *Options) ParseFlags() {
 	pflag.StringArrayVarP(&x, "vx", "x", nil, "x vars (eg. -x 1-3 -x 5)")
 	pflag.StringArrayVarP(&y, "vy", "y", nil, "y var")
 	pflag.StringArrayVarP(&z, "vz", "z", nil, "z var")
-	pflag.StringArrayVarP(&o.Oids, "oid", "o", nil, "")
-	pflag.StringVarP(&o.TrapAddr, "trapAddr", "", "", "")
-	pflag.StringVarP(&o.Verbose, "verbose", "V", "", "debug,desc")
+	pflag.StringArrayVarP(&o.Oids, "oid", "o", nil, "oids")
+	pflag.StringVarP(&o.TrapAddr, "trapAddr", "", "", "Trap server listening address(eg. :9162)")
+	pflag.StringVarP(&o.Verbose, "verbose", "V", "", "debug/desc, Verbose logging of packets, oid units, oid description and etc.")
 
 	cnf := &o.ClientConfig
 	declarePflags(pflag.CommandLine, cnf)

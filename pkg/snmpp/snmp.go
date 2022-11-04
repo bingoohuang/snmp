@@ -17,7 +17,7 @@ type ClientConfig struct {
 	Retries              int    `toml:"retries" flag:",r" usage:"Number of retries to attempt."`
 	Version              int    `toml:"version" flag:",v" usage:"SNMP version; can be 1, 2, or 3."`
 	UnconnectedUDPSocket bool   `toml:"unconnected_udp_socket" usage:"Unconnected UDP socket When true, SNMP responses are accepted from any address not just the requested address. This can be useful when gathering from redundant/failover systems."`
-	Community            string `toml:"community" usage:"SNMP community string, Parameters for Version 1 & 2"`
+	Community            string `toml:"community" flag:",n" usage:"SNMP community string, Parameters for Version 1 & 2"`
 
 	MaxRepetitions int `toml:"max_repetitions" usage:"The GETBULK max-repetitions parameter, Parameters for Version 2 & 3"`
 
