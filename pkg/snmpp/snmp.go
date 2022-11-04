@@ -85,11 +85,11 @@ func (o *ClientConfig) CreateGoSNMP(target string, verbose bool) *g.GoSNMP {
 		gs.Version = g.Version2c
 	}
 
-	if o.AuthPassword != "" {
+	if o.UserName != "" {
 		gs.Version = g.Version3
 	}
 
-	if o.Version == 3 {
+	if gs.Version == g.Version3 {
 		o.SetVersion3Parameters(gs)
 	} else {
 		gs.Community = Or(o.Community, DefaultCommunity)
