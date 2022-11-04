@@ -41,8 +41,11 @@ func (o *Options) do(target string) {
 	defer t.Close()
 
 	t.trapSend()
-	t.snmpGet()
-	t.snmpWalk()
+
+	pduNames := map[string]bool{}
+
+	t.snmpGet(pduNames)
+	t.snmpWalk(pduNames)
 }
 
 func (o *Options) createAgent(target string) Target {

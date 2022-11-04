@@ -7,7 +7,7 @@ import (
 	g "github.com/gosnmp/gosnmp"
 )
 
-func (t *Target) snmpWalk() {
+func (t *Target) snmpWalk(pduNames map[string]bool) {
 	if !strings.Contains(t.Operate, "walk") {
 		return
 	}
@@ -15,7 +15,10 @@ func (t *Target) snmpWalk() {
 	for _, oid := range t.Oids {
 		i := 0
 		if err := t.BulkWalk(oid, func(pdu g.SnmpPDU) error {
-			t.printPdu("walk", t.target, i, pdu)
+			if !pduNames[pdu.Name] {
+				pduNames[pdu.Name] = true
+				t.printPdu("walk", t.target, i, pdu)
+			}
 			i++
 			return nil
 		}); err != nil {
@@ -24,7 +27,7 @@ func (t *Target) snmpWalk() {
 	}
 }
 
-func (t *Target) snmpGet() {
+func (t *Target) snmpGet(pduNames map[string]bool) {
 	if !strings.Contains(t.Operate, "get") {
 		return
 	}
@@ -36,6 +39,10 @@ func (t *Target) snmpGet() {
 	}
 
 	for i, pdu := range result.Variables {
-		t.printPdu("get", t.target, i, pdu)
+		if !pduNames[pdu.Name] {
+			pduNames[pdu.Name] = true
+			pduNames[pdu.Name] = true
+			t.printPdu("get", t.target, i, pdu)
+		}
 	}
 }

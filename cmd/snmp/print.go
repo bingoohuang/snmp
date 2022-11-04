@@ -27,19 +27,9 @@ func (o *Options) printPdu(typ, target string, i int, pdu g.SnmpPDU) {
 		symbolName = "[" + KeyStyle + symbolName + EndStyle + "]"
 	}
 
-	arrow := StringStyle + "=>" + EndStyle
-
-	fmt.Printf("%s%s[%d]%s[%s] %s %v: ", typ, target, i, symbolName, pdu.Name, arrow, pdu.Type)
-	fmt.Print(RedStyle)
-	switch pdu.Type {
-	case g.OctetString:
-		fmt.Printf("%s", pdu.Value.([]byte))
-	case g.ObjectIdentifier:
-		fmt.Printf("%s", pdu.Value.(string))
-	default:
-		fmt.Printf("%v", pdu.Value)
-	}
-	fmt.Print(EndStyle)
+	fmt.Printf("%s%s[%d]%s[%s] %s=>%s %v: %s%s%s",
+		typ, target, i, symbolName, pdu.Name, StringStyle, EndStyle,
+		pdu.Type, RedStyle, pduValue(pdu), EndStyle)
 
 	if strings.Contains(o.Verbose, "desc") && description != "" {
 		if syn.Unit != "" {
@@ -50,4 +40,15 @@ func (o *Options) printPdu(typ, target string, i int, pdu g.SnmpPDU) {
 	}
 
 	fmt.Println()
+}
+
+func pduValue(pdu g.SnmpPDU) any {
+	switch pdu.Type {
+	case g.OctetString:
+		return pdu.Value.([]byte)
+	case g.ObjectIdentifier:
+		return pdu.Value.(string)
+	default:
+		return fmt.Sprintf("%v", pdu.Value)
+	}
 }
