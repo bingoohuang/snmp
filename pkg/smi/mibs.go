@@ -8,7 +8,6 @@ package smi
 
 import (
 	"fmt"
-	"io/ioutil"
 	"log"
 	"os"
 	"path/filepath"
@@ -263,10 +262,9 @@ func (mib *MIB) loadImports(imports []Import) error {
 func (mib *MIB) scanDirs() error {
 	scanMods := make(map[string]*Module)
 	for _, dirname := range mib.dirs {
-		if fi, err := os.Stat(dirname); !os.IsNotExist(err) {
+		if fi, err := os.Stat(dirname); err == nil {
 			if fi.IsDir() {
-				err = scanDir(dirname, &scanMods)
-				if err != nil {
+				if err := scanDir(dirname, &scanMods); err != nil {
 					return err
 				}
 			}
@@ -298,7 +296,7 @@ func (mib *MIB) scanDirs() error {
 }
 
 func scanDir(dirname string, scanMods *map[string]*Module) error {
-	files, err := ioutil.ReadDir(dirname)
+	files, err := os.ReadDir(dirname)
 	if err != nil {
 		return err
 	}
