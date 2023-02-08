@@ -34,9 +34,9 @@ func (o *Options) ParseFlags() {
 
 	pflag.StringVarP(&o.Operate, "method", "m", "get/walk", "")
 	pflag.StringArrayVarP(&o.Agents, "agent", "t", nil, `Agent addresses to retrieve values from.`+"\n"+
-		`   format:  agents = ["<scheme://><hostname>:<optional port>"]`+"\n"+
+		`   format:  agents = <community@><scheme://><hostname>:<optional port>`+"\n"+
 		`   scheme:  optional, either udp, udp4, udp6, tcp, tcp4, tcp6. default is udp`+"\n"+
-		`   example: 127.0.0.1, udp://127.0.0.1:161, tcp://127.0.0.1:161, udp4://v4only-snmp-agent`+"\n")
+		`   example: 127.0.0.1, myCommunity@192.168.1.2:1234, udp://127.0.0.1:161, tcp://127.0.0.1:161, udp4://v4only-snmp-agent`+"\n")
 	pflag.StringArrayVarP(&x, "vx", "x", nil, "x vars (eg. -x 1-3 -x 5)")
 	pflag.StringArrayVarP(&y, "vy", "y", nil, "y var")
 	pflag.StringArrayVarP(&z, "vz", "z", nil, "z var")
