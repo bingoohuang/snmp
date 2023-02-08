@@ -3,12 +3,13 @@ package main
 import (
 	"fmt"
 	"strings"
+	"time"
 
 	"github.com/bingoohuang/snmp/pkg/snmpp"
 	g "github.com/gosnmp/gosnmp"
 )
 
-func (o *Options) printPdu(typ, target string, i int, pdu g.SnmpPDU) {
+func (o *Options) printPdu(typ, target string, i int, pdu g.SnmpPDU, cost time.Duration) {
 	symbolName, description, syn := snmpp.ParseOIDSymbolName(pdu.Name, o.mib)
 
 	if o.Operate != typ {
@@ -27,9 +28,9 @@ func (o *Options) printPdu(typ, target string, i int, pdu g.SnmpPDU) {
 		symbolName = "[" + KeyStyle + symbolName + EndStyle + "]"
 	}
 
-	fmt.Printf("%s%s[%d]%s[%s] %s=>%s %v: %s%s%s",
+	fmt.Printf("%s%s[%d]%s[%s] %s=>%s %v: %s%s%s cost: %s",
 		typ, target, i, symbolName, pdu.Name, StringStyle, EndStyle,
-		pdu.Type, RedStyle, pduValue(pdu), EndStyle)
+		pdu.Type, RedStyle, pduValue(pdu), EndStyle, cost)
 
 	if strings.Contains(o.Verbose, "desc") && description != "" {
 		if syn.Unit != "" {

@@ -37,6 +37,45 @@ use `x` as a placeholder:
 [2][BJSER-MIB::ServerTime.0][.1.3.6.1.4.1.43353.1.1.3.0] = OctetString: 2021/1/15 17:44:26
 ```
 
+```sh
+$ snmp -t bj@10.0.16.26:161 -t bj@10.0.16.29:161 -t bj@10.0.17.22:161 -t bj@10.0.17.30:161 -t bj@10.0.17.29:161 .1.3.6.1.4.1.2021.9.1.6.1 .1.3.6.1.4.1.2021.11.9.0 .1.3.6.1.4.1.2021.9.1.8.1 .1.3.6.1.4.1.2021.9.1.7.1 .1.3.6.1.4.1.2021.4.5.0 .1.3.6.1.4.1.2021.4.6.0 .1.3.6.1.4.1.2021.4.14.0
+[get][bj@10.0.16.26][0][UCD-SNMP-MIB::dskTotal.1][.1.3.6.1.4.1.2021.9.1.6.1] => Integer: 932776960 cost: 511.301µs
+[get][bj@10.0.16.26][1][UCD-SNMP-MIB::ssCpuUser.0][.1.3.6.1.4.1.2021.11.9.0] => Integer: 54 cost: 511.301µs
+[get][bj@10.0.16.26][2][UCD-SNMP-MIB::dskUsed.1][.1.3.6.1.4.1.2021.9.1.8.1] => Integer: 52823028 cost: 511.301µs
+[get][bj@10.0.16.26][3][UCD-SNMP-MIB::dskAvail.1][.1.3.6.1.4.1.2021.9.1.7.1] => Integer: 879953920 cost: 511.301µs
+[get][bj@10.0.16.26][4][UCD-SNMP-MIB::memTotalReal.0][.1.3.6.1.4.1.2021.4.5.0] => Integer: 7939172 cost: 511.301µs
+[get][bj@10.0.16.26][5][UCD-SNMP-MIB::memAvailReal.0][.1.3.6.1.4.1.2021.4.6.0] => Integer: 701840 cost: 511.301µs
+[get][bj@10.0.16.26][6][UCD-SNMP-MIB::memBuffer.0][.1.3.6.1.4.1.2021.4.14.0] => Integer: 0 cost: 511.301µs
+[get][bj@10.0.16.29][0][UCD-SNMP-MIB::dskTotal.1][.1.3.6.1.4.1.2021.9.1.6.1] => Integer: 932776960 cost: 499.489µs
+[get][bj@10.0.16.29][1][UCD-SNMP-MIB::ssCpuUser.0][.1.3.6.1.4.1.2021.11.9.0] => Integer: 0 cost: 499.489µs
+[get][bj@10.0.16.29][2][UCD-SNMP-MIB::dskUsed.1][.1.3.6.1.4.1.2021.9.1.8.1] => Integer: 7769316 cost: 499.489µs
+[get][bj@10.0.16.29][3][UCD-SNMP-MIB::dskAvail.1][.1.3.6.1.4.1.2021.9.1.7.1] => Integer: 925007644 cost: 499.489µs
+[get][bj@10.0.16.29][4][UCD-SNMP-MIB::memTotalReal.0][.1.3.6.1.4.1.2021.4.5.0] => Integer: 7969536 cost: 499.489µs
+[get][bj@10.0.16.29][5][UCD-SNMP-MIB::memAvailReal.0][.1.3.6.1.4.1.2021.4.6.0] => Integer: 2911636 cost: 499.489µs
+[get][bj@10.0.16.29][6][UCD-SNMP-MIB::memBuffer.0][.1.3.6.1.4.1.2021.4.14.0] => Integer: 992 cost: 499.489µs
+[get][bj@10.0.17.22][0][UCD-SNMP-MIB::dskTotal.1][.1.3.6.1.4.1.2021.9.1.6.1] => Integer: 932776960 cost: 1.431668ms
+[get][bj@10.0.17.22][1][UCD-SNMP-MIB::ssCpuUser.0][.1.3.6.1.4.1.2021.11.9.0] => Integer: 0 cost: 1.431668ms
+[get][bj@10.0.17.22][2][UCD-SNMP-MIB::dskUsed.1][.1.3.6.1.4.1.2021.9.1.8.1] => Integer: 6315940 cost: 1.431668ms
+[get][bj@10.0.17.22][3][UCD-SNMP-MIB::dskAvail.1][.1.3.6.1.4.1.2021.9.1.7.1] => Integer: 926461020 cost: 1.431668ms
+[get][bj@10.0.17.22][4][UCD-SNMP-MIB::memTotalReal.0][.1.3.6.1.4.1.2021.4.5.0] => Integer: 16155888 cost: 1.431668ms
+[get][bj@10.0.17.22][5][UCD-SNMP-MIB::memAvailReal.0][.1.3.6.1.4.1.2021.4.6.0] => Integer: 9434412 cost: 1.431668ms
+[get][bj@10.0.17.22][6][UCD-SNMP-MIB::memBuffer.0][.1.3.6.1.4.1.2021.4.14.0] => Integer: 2124 cost: 1.431668ms
+[get][bj@10.0.17.30][0][UCD-SNMP-MIB::dskTotal.1][.1.3.6.1.4.1.2021.9.1.6.1] => Integer: 932776960 cost: 1.290131ms
+[get][bj@10.0.17.30][1][UCD-SNMP-MIB::ssCpuUser.0][.1.3.6.1.4.1.2021.11.9.0] => Integer: 0 cost: 1.290131ms
+[get][bj@10.0.17.30][2][UCD-SNMP-MIB::dskUsed.1][.1.3.6.1.4.1.2021.9.1.8.1] => Integer: 4939324 cost: 1.290131ms
+[get][bj@10.0.17.30][3][UCD-SNMP-MIB::dskAvail.1][.1.3.6.1.4.1.2021.9.1.7.1] => Integer: 927837636 cost: 1.290131ms
+[get][bj@10.0.17.30][4][UCD-SNMP-MIB::memTotalReal.0][.1.3.6.1.4.1.2021.4.5.0] => Integer: 16166500 cost: 1.290131ms
+[get][bj@10.0.17.30][5][UCD-SNMP-MIB::memAvailReal.0][.1.3.6.1.4.1.2021.4.6.0] => Integer: 10745460 cost: 1.290131ms
+[get][bj@10.0.17.30][6][UCD-SNMP-MIB::memBuffer.0][.1.3.6.1.4.1.2021.4.14.0] => Integer: 2136 cost: 1.290131ms
+[get][bj@10.0.17.29][0][UCD-SNMP-MIB::dskTotal.1][.1.3.6.1.4.1.2021.9.1.6.1] => Integer: 932776960 cost: 1.27215ms
+[get][bj@10.0.17.29][1][UCD-SNMP-MIB::ssCpuUser.0][.1.3.6.1.4.1.2021.11.9.0] => Integer: 0 cost: 1.27215ms
+[get][bj@10.0.17.29][2][UCD-SNMP-MIB::dskUsed.1][.1.3.6.1.4.1.2021.9.1.8.1] => Integer: 4651104 cost: 1.27215ms
+[get][bj@10.0.17.29][3][UCD-SNMP-MIB::dskAvail.1][.1.3.6.1.4.1.2021.9.1.7.1] => Integer: 928125856 cost: 1.27215ms
+[get][bj@10.0.17.29][4][UCD-SNMP-MIB::memTotalReal.0][.1.3.6.1.4.1.2021.4.5.0] => Integer: 7938600 cost: 1.27215ms
+[get][bj@10.0.17.29][5][UCD-SNMP-MIB::memAvailReal.0][.1.3.6.1.4.1.2021.4.6.0] => Integer: 4408248 cost: 1.27215ms
+[get][bj@10.0.17.29][6][UCD-SNMP-MIB::memBuffer.0][.1.3.6.1.4.1.2021.4.14.0] => Integer: 2324 cost: 1.27215ms
+```
+
 start snmp trap server:
 
 ```sh

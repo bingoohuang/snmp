@@ -27,6 +27,6 @@ func (o *Options) trap() {
 func (o *Options) trapHandler(p *g.SnmpPacket, addr *net.UDPAddr) {
 	log.Printf("got trapdata from %s", addr.IP)
 	for i, v := range p.Variables {
-		o.printPdu("trap", addr.String(), i, v)
+		o.printPdu("trap", addr.String(), i, v, 0)
 	}
 }
