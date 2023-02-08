@@ -1,12 +1,15 @@
 package main
 
 import (
+	"fmt"
 	"log"
+	"os"
 	"reflect"
 	"strconv"
 	"strings"
 	"time"
 
+	"github.com/bingoohuang/gg/pkg/v"
 	"github.com/bingoohuang/snmp/pkg/smi"
 	"github.com/bingoohuang/snmp/pkg/snmpp"
 	"github.com/bingoohuang/snmp/pkg/util"
@@ -25,6 +28,8 @@ type Options struct {
 	Operate  string
 	Logger   *gosnmp.Logger
 	mib      *smi.MIB
+
+	Version bool
 }
 
 var timeDurationType = reflect.TypeOf(time.Duration(0))
@@ -43,11 +48,17 @@ func (o *Options) ParseFlags() {
 	pflag.StringArrayVarP(&o.Oids, "oid", "o", nil, "oids")
 	pflag.StringVarP(&o.TrapAddr, "trapAddr", "", "", "Trap server listening address(eg. :9162)")
 	pflag.StringVarP(&o.Verbose, "verbose", "V", "", "debug/desc, Verbose logging of packets, oid units, oid description and etc.")
+	pflag.BoolVarP(&o.Version, "ver", "", false, "print snmp version and exit")
 
 	cnf := &o.ClientConfig
 	declarePflags(pflag.CommandLine, cnf)
 
 	pflag.Parse()
+
+	if o.Version {
+		fmt.Println(v.Version())
+		os.Exit(0)
+	}
 
 	debug := strings.Contains(o.Verbose, "debug")
 	o.mib = snmpp.LoadMibs(debug)
