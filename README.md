@@ -205,8 +205,8 @@ The commands above required the following settings in /etc/snmp/snmptrapd.conf
 yum install net-snmp net-snmp-utils net-snmp* -y
 
 # 配置
-vim /etc/snmp/snmpd.conf com2sec notConfigUser default ccssoft view all included .1 access notConfigGroup ""      any
-noauth exact all none none includeAllDisks rocommunity ccssoft disk / disk /home
+vim /etc/snmp/snmpd.conf com2sec notConfigUser default x1soft view all included .1 access notConfigGroup ""      any
+noauth exact all none none includeAllDisks rocommunity x1soft disk / disk /home
 
 # 启动snmp服务
 systemctl enable snmpd systemctl start snmpd
@@ -233,18 +233,18 @@ firewall-cmd --zone=public --list-ports
 # 查看一下安装的snmp软件包
 rpm -qa | grep net-snmp*
 
-snmpget -c ccssoft -v 2c localhost .1.3.6.1.4.1.2021.11.9.0
+snmpget -c x1soft -v 2c localhost .1.3.6.1.4.1.2021.11.9.0
 
 # snmpget 模拟snmp的GetRequest操作的工具。用来获取一个或几个管理信息。用来读取管理信息的内容。
 # 获取设备的描述信息
-[root@paas ~]# snmpget -c ccssoft -v 2c paas-node1.m8.ccs sysDescr.0 SNMPv2-MIB::sysDescr.0 = STRING: Linux
-paas-node1.m8.ccs 3.10.0-514.26.2.el7.x86_64 #1 SMP Tue Jul 4 15:04:05 UTC 2017 x86_64
-[root@paas ~]# uname -a Linux paas.m8.ccs 3.10.0-693.5.2.el7.x86_64 #1 SMP Fri Oct 20 20:32:50 UTC 2017 x86_64 x86_64
+[root@paas ~]# snmpget -c x1soft -v 2c paas-node1.m9.xxs sysDescr.0 SNMPv2-MIB::sysDescr.0 = STRING: Linux
+paas-node1.m9.xxs 3.10.0-514.26.2.el7.x86_64 #1 SMP Tue Jul 4 15:04:05 UTC 2017 x86_64
+[root@paas ~]# uname -a Linux paas.m9.xxs 3.10.0-693.5.2.el7.x86_64 #1 SMP Fri Oct 20 20:32:50 UTC 2017 x86_64 x86_64
 x86_64 GNU/Linux
 [root@paas ~]#
 
 # 获取磁盘信息
-[root@paas ~]# snmpdf -v2c -c ccssoft localhost
+[root@paas ~]# snmpdf -v2c -c x1soft localhost
 ```
 
 ### snmpwalk和snmpget的区别
