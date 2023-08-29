@@ -1,10 +1,10 @@
-github.com/bingoohuang/gg v0.0.0-20230203013952-be11dfa0c486 h1:oNQlt4NzoX1vIzbWtuQOYnt1PC407TWSQt1o973cHe0=
-github.com/bingoohuang/gg v0.0.0-20230203013952-be11dfa0c486/go.mod h1:DfYJZZ45OOHWaqh5aIpa1uX3Lp4qvhG3fkNG203IUVs=
+github.com/bingoohuang/gg v0.0.0-20230823021422-6aad642c5a6d h1:ED4GkNCkEz/Mb6bT17B/kl1E1eIn+BRIC5KFSGNBIFM=
+github.com/bingoohuang/gg v0.0.0-20230823021422-6aad642c5a6d/go.mod h1:lHQy+Py9pNE5pHWlTTq2fKGPNrRgSEjp2dvWNAAACFo=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
-github.com/gosnmp/gosnmp v1.35.0 h1:EuWWNPxTCdAUx2/NbQcSa3WdNxjzpy4Phv57b4MWpJM=
-github.com/gosnmp/gosnmp v1.35.0/go.mod h1:2AvKZ3n9aEl5TJEo/fFmf/FGO4Nj4cVeEc5yuk88CYc=
+github.com/gosnmp/gosnmp v1.36.0 h1:1Si+MImHcKIqFc3/kJEs2LOULP1nlFKlzPFyrMOk5Qk=
+github.com/gosnmp/gosnmp v1.36.0/go.mod h1:iLcZxN2MxKhH0jPQDVMZaSNypw1ykqVi27O79koQj6w=
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
 github.com/spf13/pflag v1.0.5 h1:iy+VFUOCP1a+8yFto/drg2CJ5u0yRoB7fZw3DKv/JXA=
 github.com/spf13/pflag v1.0.5/go.mod h1:McXfInJRrz4CZXVZOBLb0bTZqETkiAhM9Iw0y3An2Bg=
-github.com/stretchr/testify v1.8.0 h1:pSgiaMZlXftHpm5L7V1+rVB+AZJydKsMxsQBIJw4PKk=
+github.com/stretchr/testify v1.8.4 h1:CcVxjf3Q8PM0mHUKJCdn+eZZtm5yQwehR5yeSVQQcUk=
 gopkg.in/yaml.v3 v3.0.1 h1:fxVm/GzAzEWqLHuvctI91KS9hhNmmWOoWu0XTYJS7CA=

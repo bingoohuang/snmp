@@ -42,11 +42,11 @@ func (o *Options) ParseFlags() {
 		`   format:  agents = <community@><scheme://><hostname>:<optional port>`+"\n"+
 		`   scheme:  optional, either udp, udp4, udp6, tcp, tcp4, tcp6. default is udp`+"\n"+
 		`   example: 127.0.0.1, myCommunity@192.168.1.2:1234, udp://127.0.0.1:161, tcp://127.0.0.1:161, udp4://v4only-snmp-agent`+"\n")
-	pflag.StringArrayVarP(&x, "vx", "x", nil, "x vars (eg. -x 1-3 -x 5)")
-	pflag.StringArrayVarP(&y, "vy", "y", nil, "y var")
-	pflag.StringArrayVarP(&z, "vz", "z", nil, "z var")
+	pflag.StringArrayVarP(&x, "x", "x", nil, "x vars (eg. -x 1-3 -x 5)")
+	pflag.StringArrayVarP(&y, "y", "y", nil, "y var")
+	pflag.StringArrayVarP(&z, "z", "z", nil, "z var")
 	pflag.StringArrayVarP(&o.Oids, "oid", "o", nil, "oids")
-	pflag.StringVarP(&o.TrapAddr, "trapAddr", "", "", "Trap server listening address(eg. :9162)")
+	pflag.StringVarP(&o.TrapAddr, "trapAddr", "s", "", "Trap server listening address(eg. :9162)")
 	pflag.StringVarP(&o.Verbose, "verbose", "V", "", "debug/desc, Verbose logging of packets, oid units, oid description and etc.")
 	pflag.BoolVarP(&o.Version, "ver", "", false, "print snmp version and exit")
 
@@ -137,8 +137,7 @@ func flagVar(pf *pflag.FlagSet, ft reflect.StructField, p any, flagName string, 
 
 	switch ft.Type.Kind() {
 	case reflect.Slice:
-		switch ft.Type.Elem().Kind() {
-		case reflect.String:
+		if ft.Type.Elem().Kind() == reflect.String {
 			pf.StringArrayVarP(p.(*[]string), name, shortName, strings.Split(value, ","), usage)
 			return true
 		}

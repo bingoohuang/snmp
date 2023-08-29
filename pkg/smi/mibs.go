@@ -7,6 +7,7 @@
 package smi
 
 import (
+	"errors"
 	"fmt"
 	"log"
 	"os"
@@ -311,7 +312,8 @@ func scanDir(dirname string, scanMods *map[string]*Module) error {
 		if moduleName, err := ModuleName(absPath); err == nil {
 			(*scanMods)[moduleName] = &Module{Name: moduleName, File: absPath}
 		} else {
-			if _, ok := err.(NotAModuleError); !ok {
+			var notAModuleError NotAModuleError
+			if !errors.As(err, &notAModuleError) {
 				return err
 			}
 		}

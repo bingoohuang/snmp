@@ -142,11 +142,12 @@ func (o *ClientConfig) SetVersion3Parameters(gs *g.GoSNMP) {
 	case "authpriv":
 		gs.MsgFlags = g.AuthPriv
 	default:
-		if o.AuthPassword != "" && o.PrivPassword != "" {
+		switch {
+		case o.AuthPassword != "" && o.PrivPassword != "":
 			gs.MsgFlags = g.AuthPriv
-		} else if o.AuthPassword != "" && o.PrivPassword == "" {
+		case o.AuthPassword != "" && o.PrivPassword == "":
 			gs.MsgFlags = g.AuthNoPriv
-		} else if o.AuthPassword == "" && o.PrivPassword == "" {
+		case o.AuthPassword == "" && o.PrivPassword == "":
 			gs.MsgFlags = g.NoAuthNoPriv
 		}
 	}

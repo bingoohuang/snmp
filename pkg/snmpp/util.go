@@ -45,15 +45,16 @@ func LoadMibs(verbose bool) *smi.MIB {
 
 func addDir(sysMibDir string, dirs []string, verbose bool) []string {
 	d, err := os.Stat(sysMibDir)
-	if err != nil {
+	switch {
+	case err != nil:
 		if verbose {
 			log.Printf("W! failed to read %s, error: %v", sysMibDir, err)
 		}
-	} else if !d.IsDir() {
+	case !d.IsDir():
 		if verbose {
 			log.Printf("W! %s is not a directory", sysMibDir)
 		}
-	} else {
+	default:
 		dirs = append(dirs, sysMibDir)
 	}
 

@@ -448,11 +448,12 @@ func (lex *Lexer) getToken(lval *smiSymType) int {
 func (lex *Lexer) nextState(tok int) {
 	switch lex.state {
 	case skipNone:
-		if tok == tCHOICE {
+		switch tok {
+		case tCHOICE:
 			lex.state = skipChoice
-		} else if tok == tEXPORTS {
+		case tEXPORTS:
 			lex.state = skipExports
-		} else if tok == tMACRO {
+		case tMACRO:
 			lex.state = skipMacro
 		}
 	case skipChoice:

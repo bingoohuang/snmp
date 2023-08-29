@@ -4,14 +4,36 @@ snmp package and tools in golang.
 
 ```sh
 $ snmp -h
-Usage: snmp [options] oids...
-  -m     method to operate, get/walk/trapsend/translate (default is get/walk)
-  -c     string Default SNMP community (default "public")
-  -t     one or more SNMP targets (eg. -t 192.168.1.1 -t myCommunity@192.168.1.2:1234)
-  -x/y/z one or more x/y/z vars (eg. -x 1-3 -y 1,3,5 -z 1,2-5)
-  -o     one or more oids
-  -s     trap server listening address(eg. :9162)
-  -V     Verbose logging of packets, oid units, oid description and etc.
+Usage of snmp:
+  -t, --agent stringArray      Agent addresses to retrieve values from.
+                                  format:  agents = <community@><scheme://><hostname>:<optional port>
+                                  scheme:  optional, either udp, udp4, udp6, tcp, tcp4, tcp6. default is udp
+                                  example: 127.0.0.1, myCommunity@192.168.1.2:1234, udp://127.0.0.1:161, tcp://127.0.0.1:161, udp4://v4only-snmp-agent
+                               
+  -A, --authPassword string    Authentication password
+  -a, --authProtocol string    Authentication protocol; one of MD5, SHA, SHA224, SHA256, SHA384, SHA512. for SNMPv3
+      --community string       SNMP community string, Parameters for Version 1 & 2
+  -n, --contextName string     Context Name. for SNMPv3
+      --engineBoots int        
+      --engineID string        
+      --engineTime int         
+      --maxRepetitions int     The GETBULK max-repetitions parameter, Parameters for Version 2 & 3
+  -m, --method string           (default "get/walk")
+  -o, --oid stringArray        oids
+  -X, --privPassword string    Privacy password used for encrypted messages
+      --privProtocol string    Privacy protocol used for encrypted messages; one of DES, AES, AES192, AES192C, AES256, AES256C
+  -r, --retries int            Number of retries to attempt.
+      --secLevel string        Security Level; one of none, authNoPriv, or authPriv. for SNMPv3
+      --timeout duration       
+      --trapAddr string        Trap server listening address(eg. :9162)
+      --unconnectedUDPSocket   Unconnected UDP socket When true, SNMP responses are accepted from any address not just the requested address. This can be useful when gathering from redundant/failover systems.
+  -u, --userName string        User Name. for SNMPv3
+      --ver                    print snmp version and exit
+  -V, --verbose string         debug/desc, Verbose logging of packets, oid units, oid description and etc.
+  -v, --version int            SNMP version; can be 1, 2, or 3.
+  -x, --x stringArray          x vars (eg. -x 1-3 -x 5)
+  -y, --y stringArray          y var
+  -z, --z stringArray          z var
 ```
 
 ## examples
@@ -144,57 +166,66 @@ Description: Available space on the disk.For large lightly-used disks (>2Tb), th
 
 ### public resources
 
-1. [SMPP (3.4) Client Library in pure Go](https://github.com/linxGnu/gosmpp), This library is well tested with SMSC simulators: [Melroselabs SMSC](https://melroselabs.com/services/smsc-simulator/#smsc-simulator-try)
+1. [SMPP (3.4) Client Library in pure Go](https://github.com/linxGnu/gosmpp), This library is well tested with SMSC
+   simulators: [Melroselabs SMSC](https://melroselabs.com/services/smsc-simulator/#smsc-simulator-try)
 
 ### SNMP v2 Trap
 
 [SNMP Trap - How To Send A Test Trap](https://support.nagios.com/kb/article.php?id=493)
 
-* Command form: `snmptrap -v <snmp_version> -c <community> <destination_host> <uptime> <OID_or_MIB> <object> <value_type> <value>`
-* Using MIB: `snmptrap -v2c -c public localhost '' NET-SNMP-EXAMPLES-MIB::netSnmpExampleHeartbeatNotification netSnmpExampleHeartbeatRate i 123456`
-* Shortening MIB: `snmptrap -v2c -c public localhost '' netSnmpExampleHeartbeatNotification netSnmpExampleHeartbeatRate i 123456`
+* Command
+  form: `snmptrap -v <snmp_version> -c <community> <destination_host> <uptime> <OID_or_MIB> <object> <value_type> <value>`
+* Using
+  MIB: `snmptrap -v2c -c public localhost '' NET-SNMP-EXAMPLES-MIB::netSnmpExampleHeartbeatNotification netSnmpExampleHeartbeatRate i 123456`
+* Shortening
+  MIB: `snmptrap -v2c -c public localhost '' netSnmpExampleHeartbeatNotification netSnmpExampleHeartbeatRate i 123456`
 * Using OID: `snmptrap -v 2c -c public localhost '' 1.3.6.1.4.1.8072.2.3.0.1 1.3.6.1.4.1.8072.2.3.2.1 i 123456`
 
 The commands above required the following settings in /etc/snmp/snmptrapd.conf
 
-  disableAuthorization yes
-  traphandle default /usr/sbin/snmptthandler
+disableAuthorization yes
+traphandle default /usr/sbin/snmptthandler
 
 ### SNMP定义名词术语
 
 [SNMP定义](https://github.com/fenggolang/collect)
 
 * SNMP：Simple Network Management Protocol(简单网络管理协议)，是一个标准的用于管理基于IP网络上设备的协议。
-  * SNMP的主要功能: 通过应答POLLING(轮询)来反馈当前设备状态;
-  * SNMP的工作方式: 管理员需要向设备获取数据,所以SNMP提供了"读"操作;管理员需要向设备执行设置操作,所以SNMP提供了"写"操作; 设备需要在重要状况改变的时候,向管理员通报事件的发生,所以SNMP提供了"Trap" 操作;
-  * SNMP被设计为工作在TCP/IP协议族上.SNMP基于TCP/IP协议工作,对网络中支持SNMP协议的设备进行管理.所有支持SNMP协议的设备都提供SNMP这个统一界面，使得管理员可以使用统一的操作进行管理，而不必理会设备是什么类型、是哪个厂家生产的.
+    * SNMP的主要功能: 通过应答POLLING(轮询)来反馈当前设备状态;
+    * SNMP的工作方式: 管理员需要向设备获取数据,所以SNMP提供了"读"操作;管理员需要向设备执行设置操作,所以SNMP提供了"写"操作;
+      设备需要在重要状况改变的时候,向管理员通报事件的发生,所以SNMP提供了"Trap" 操作;
+    *
+    SNMP被设计为工作在TCP/IP协议族上.SNMP基于TCP/IP协议工作,对网络中支持SNMP协议的设备进行管理.所有支持SNMP协议的设备都提供SNMP这个统一界面，使得管理员可以使用统一的操作进行管理，而不必理会设备是什么类型、是哪个厂家生产的.
 * OID: 对象标识符（OID－Object Identifiers），是SNMP代理提供的具有唯一标识的键值，MIB（管理信息基）提供数字化OID到可读文本的映射。
-  * SNMP OID是用一种按照层次化格式组织的、树状结构中的唯一地址来表示的，它与DNS层次相似。 
-  * sample structure of an OID: 
-    * `iso(1).org(3).dod(6).internet(1).private(4).transition(868).products(2).chassis(4).card(1).slotCps(2)-cpsSlotSummary(1).cpsModuleTable(1).cpsModuleEntry(1).cpsModuleModel(3).3562.3`
-    * or just: `1.3.6.1.4.868.2.4.1.2.1.1.1.3.3562.3`
-  * ![image](https://user-images.githubusercontent.com/1940588/104560584-0a639380-5681-11eb-8de8-a6f71b8788c9.png)
-  * [oidref.com](https://oidref.com/1.3.6.1.6.3.1.1.4.1)
-  * [http://oid-info.com/](http://oid-info.com/get/1.3.6.1.4.1.2021.4.5)
+    * SNMP OID是用一种按照层次化格式组织的、树状结构中的唯一地址来表示的，它与DNS层次相似。
+    * sample structure of an OID:
+        * `iso(1).org(3).dod(6).internet(1).private(4).transition(868).products(2).chassis(4).card(1).slotCps(2)-cpsSlotSummary(1).cpsModuleTable(1).cpsModuleEntry(1).cpsModuleModel(3).3562.3`
+        * or just: `1.3.6.1.4.868.2.4.1.2.1.1.1.3.3562.3`
+    * ![image](https://user-images.githubusercontent.com/1940588/104560584-0a639380-5681-11eb-8de8-a6f71b8788c9.png)
+    * [oidref.com](https://oidref.com/1.3.6.1.6.3.1.1.4.1)
+    * [http://oid-info.com/](http://oid-info.com/get/1.3.6.1.4.1.2021.4.5)
 * MIB：Management Information Base(管理信息库)，定义代理进程中所有可被查询和修改的参数。
-  * 一个OID看起来和一个IPv6的地址很象，并且不同的厂商有不同的前缀等信息。
-  * OID都非常长，使得人们难以记住，或者对他非常感冒。因此，人们就设计了一种将数字OID翻译为人们可读的格式。这种翻译映射被保存在一个被称为 “管理信息基础"MIB的、可传递的无格式文本文件里。
-  * 使用SNMP或者向SNMP设备查询，你不需要使用MIB，但是，如果没有MIB，你就得猜测你正在查看的数据是什么。
-  * 某些情况下，不使用MIB也非常简单，例如查看主机名、磁盘使用率数字，或者端口状态信息。其他情况下，就非常困难了，这个时候使用MIB就非常有帮助。
-  * 对于准备编写的应用程序来说，为了让用户避免妥当安装MIB带来的麻烦，而严格使用数字OID很常见。
-  * 安装一个MIB的动作，只是将他放置到你的SNMP客户端应用软件能够搜索到并进行上述翻译映射工作的某个位置而已(/usr/share/snmp/mibs, ~/.snmp/mibs)。
+    * 一个OID看起来和一个IPv6的地址很象，并且不同的厂商有不同的前缀等信息。
+    * OID都非常长，使得人们难以记住，或者对他非常感冒。因此，人们就设计了一种将数字OID翻译为人们可读的格式。这种翻译映射被保存在一个被称为
+      “管理信息基础"MIB的、可传递的无格式文本文件里。
+    * 使用SNMP或者向SNMP设备查询，你不需要使用MIB，但是，如果没有MIB，你就得猜测你正在查看的数据是什么。
+    * 某些情况下，不使用MIB也非常简单，例如查看主机名、磁盘使用率数字，或者端口状态信息。其他情况下，就非常困难了，这个时候使用MIB就非常有帮助。
+    * 对于准备编写的应用程序来说，为了让用户避免妥当安装MIB带来的麻烦，而严格使用数字OID很常见。
+    * 安装一个MIB的动作，只是将他放置到你的SNMP客户端应用软件能够搜索到并进行上述翻译映射工作的某个位置而已(
+      /usr/share/snmp/mibs, ~/.snmp/mibs)。
 * SMI：Structure of Management Information(管理信息结构)
-  * SMI定义了SNMP中使用到的ASN.1类型、语法，并定义了SNMP中使用到的类型、宏、符号等。SMI用于后续协议的描述和MIB的定义。每个版本的SNMP都可能定义自己的SMI。
-  * [python parse MIB files from ASN.1 SMI sources](https://github.com/qmsk/snmpbot/tree/master/scripts)
-  * [MIB json example](https://github.com/qmsk/snmpbot/blob/master/mibs/test/TEST2-MIB.json)
+    * SMI定义了SNMP中使用到的ASN.1类型、语法，并定义了SNMP中使用到的类型、宏、符号等。SMI用于后续协议的描述和MIB的定义。每个版本的SNMP都可能定义自己的SMI。
+    * [python parse MIB files from ASN.1 SMI sources](https://github.com/qmsk/snmpbot/tree/master/scripts)
+    * [MIB json example](https://github.com/qmsk/snmpbot/blob/master/mibs/test/TEST2-MIB.json)
 * SNMP的常用版本有三个：SNMPv1、SNMPv2、SNMPv3
-  * SNMPv1是为基于公共管理的初始标准(1988年）。
-  * SNMPv2是SNMPv1框架下衍生出来的，但是没有定义信息，其后修订为SNMPv2c（1908年）,一个带有于SNMPv1类似信息格式的给予公共管理的版本。
-  * SNMPv2添加了几个新的数据类型（Counter32、Counter64、Gauge32、UInteger32、NsapAdress 以及BIT STRING),以及对OID表和OID值的设置的增强。
-  * SNMPv3（2004年）是一个带有新的信息格式、ACL、安全功能和远处SNMP参数配置的、扩展了SNMPv2框架的版本。
-  * SNMPv1和SNMPv2被广泛应用，但是由于这些协议的不安全特性，通常只使用只读访问。通常，除非你确实需要附加安全特性，否则你不需要过多地关注SNMPv3。SNMPv3是具有安全性的通信协议。
-* SNMP是基于几个其他规范的，包括定义给予SNMP的数据类型的ASN.1 BER(Abstract Syntax Notation 1 Basic Encoding Rules), 
-* 以及详细描述有SNMP MIB使用的语法的管理信息结构（SMI）。**如果你选择修改MIB的某些东西，你需要学习SMIv2和ASN.1语法**，不过其他情况下你只需要在兴趣时看看他，而不必学习他。
+    * SNMPv1是为基于公共管理的初始标准(1988年）。
+    * SNMPv2是SNMPv1框架下衍生出来的，但是没有定义信息，其后修订为SNMPv2c（1908年）,一个带有于SNMPv1类似信息格式的给予公共管理的版本。
+    * SNMPv2添加了几个新的数据类型（Counter32、Counter64、Gauge32、UInteger32、NsapAdress 以及BIT STRING),以及对OID表和OID值的设置的增强。
+    * SNMPv3（2004年）是一个带有新的信息格式、ACL、安全功能和远处SNMP参数配置的、扩展了SNMPv2框架的版本。
+    * SNMPv1和SNMPv2被广泛应用，但是由于这些协议的不安全特性，通常只使用只读访问。通常，除非你确实需要附加安全特性，否则你不需要过多地关注SNMPv3。SNMPv3是具有安全性的通信协议。
+* SNMP是基于几个其他规范的，包括定义给予SNMP的数据类型的ASN.1 BER(Abstract Syntax Notation 1 Basic Encoding Rules),
+* 以及详细描述有SNMP MIB使用的语法的管理信息结构（SMI）。**如果你选择修改MIB的某些东西，你需要学习SMIv2和ASN.1语法**
+  ，不过其他情况下你只需要在兴趣时看看他，而不必学习他。
 
 ### 安装使用 SNMP
 
@@ -260,26 +291,25 @@ snmpget是取具体的OID的值。（适用于OID值是一个叶子节点的情�
 
 处理器、存储器、存储设备、网络环境为最常被监控的项目，[这些项目的细节信息如下表](https://zh.wikipedia.org/wiki/%E7%AE%80%E5%8D%95%E7%BD%91%E7%BB%9C%E7%AE%A1%E7%90%86%E5%8D%8F%E8%AE%AE)
 
-|     项目      | 访问方式 |            OID            |                 MIB                 |
+| 项目          | 访问方式 | OID                       | MIB                                 |
 |-------------|------|---------------------------|-------------------------------------|
-|     处理器     | 处理器  |            处理器            |                 处理器                 |
-|   用户占用时间比   | GET  | .1.3.6.1.4.1.2021.11.9.0  |       UCD-SNMP-MIB::ssCpuUser       |
-|   系统占用时间比   | GET  | .1.3.6.1.4.1.2021.11.10.0 |      UCD-SNMP-MIB::ssCpuSystem      |
-|    闲置时间比    | GET  | .1.3.6.1.4.1.2021.11.11.0 |       UCD-SNMP-MIB::ssCpuIdle       |
-| 每个 Core 的用量 | WALK |  .1.3.6.1.2.1.25.3.3.1.2  | HOST-RESOURCES-MIB::hrProcessorLoad |
-|     存储器     | 存储器  |            存储器            |                 存储器                 |
-|    存储器容量    | GET  |  .1.3.6.1.4.1.2021.4.5.0  |     UCD-SNMP-MIB::memTotalReal      |
-|   存储器消耗量    | GET  |  .1.3.6.1.4.1.2021.4.6.0  |     UCD-SNMP-MIB::memAvailReal      |
-|   存储器剩余量    | GET  | .1.3.6.1.4.1.2021.4.11.0  |     UCD-SNMP-MIB::memTotalFree      |
-|   虚拟内存容量    | GET  |  .1.3.6.1.4.1.2021.4.3.0  |     UCD-SNMP-MIB::memTotalSwap      |
-|   虚拟内存剩余量   | GET  |  .1.3.6.1.4.1.2021.4.4.0  |     UCD-SNMP-MIB::memAvailSwap      |
-|    存储设备     | 存储设备 |           存储设备            |                存储设备                 |
-|    各磁盘容量    | WALK | .1.3.6.1.4.1.2021.9.1.6.1 |       UCD-SNMP-MIB::dskTotal        |
-|   各磁盘消耗量    | WALK | .1.3.6.1.4.1.2021.9.1.7.1 |       UCD-SNMP-MIB::dskAvail        |
-|  各磁盘消耗量百分比  | WALK | .1.3.6.1.4.1.2021.9.1.9.1 |      UCD-SNMP-MIB::dskPercent       |
-|    网络环境     | 网络环境 |           网络环境            |                网络环境                 |
-|   网络设备名称    | WALK |  .1.3.6.1.2.1.31.1.1.1.1  |           IF-MIB::ifName            |
-
+| 处理器         | 处理器  | 处理器                       | 处理器                                 |
+| 用户占用时间比     | GET  | .1.3.6.1.4.1.2021.11.9.0  | UCD-SNMP-MIB::ssCpuUser             |
+| 系统占用时间比     | GET  | .1.3.6.1.4.1.2021.11.10.0 | UCD-SNMP-MIB::ssCpuSystem           |
+| 闲置时间比       | GET  | .1.3.6.1.4.1.2021.11.11.0 | UCD-SNMP-MIB::ssCpuIdle             |
+| 每个 Core 的用量 | WALK | .1.3.6.1.2.1.25.3.3.1.2   | HOST-RESOURCES-MIB::hrProcessorLoad |
+| 存储器         | 存储器  | 存储器                       | 存储器                                 |
+| 存储器容量       | GET  | .1.3.6.1.4.1.2021.4.5.0   | UCD-SNMP-MIB::memTotalReal          |
+| 存储器消耗量      | GET  | .1.3.6.1.4.1.2021.4.6.0   | UCD-SNMP-MIB::memAvailReal          |
+| 存储器剩余量      | GET  | .1.3.6.1.4.1.2021.4.11.0  | UCD-SNMP-MIB::memTotalFree          |
+| 虚拟内存容量      | GET  | .1.3.6.1.4.1.2021.4.3.0   | UCD-SNMP-MIB::memTotalSwap          |
+| 虚拟内存剩余量     | GET  | .1.3.6.1.4.1.2021.4.4.0   | UCD-SNMP-MIB::memAvailSwap          |
+| 存储设备        | 存储设备 | 存储设备                      | 存储设备                                |
+| 各磁盘容量       | WALK | .1.3.6.1.4.1.2021.9.1.6.1 | UCD-SNMP-MIB::dskTotal              |
+| 各磁盘消耗量      | WALK | .1.3.6.1.4.1.2021.9.1.7.1 | UCD-SNMP-MIB::dskAvail              |
+| 各磁盘消耗量百分比   | WALK | .1.3.6.1.4.1.2021.9.1.9.1 | UCD-SNMP-MIB::dskPercent            |
+| 网络环境        | 网络环境 | 网络环境                      | 网络环境                                |
+| 网络设备名称      | WALK | .1.3.6.1.2.1.31.1.1.1.1   | IF-MIB::ifName                      |
 
 [from](https://www.cnblogs.com/aspx-net/p/3554044.html)
 
@@ -366,13 +396,13 @@ snmpget是取具体的OID的值。（适用于OID值是一个叶子节点的情�
 
 from [here](https://support.microfocus.com/kb/doc.php?id=7743528)
 
-There is a distinction between those specified with a leading dot (i.e. '.1.3.6.1.2.1.1.3.0') 
+There is a distinction between those specified with a leading dot (i.e. '.1.3.6.1.2.1.1.3.0')
 and those without (i.e. '1.3.0').
 
-> If an OID has a leading dot, it is assumed the OID is fully qualified. 
+> If an OID has a leading dot, it is assumed the OID is fully qualified.
 
 > If there is no leading dot, it is assumed that the OID is prefixed with 'iso.org.dod.internet.mgmt.mib'.
- 
+
 In the examples above both '.1.3.6.1.2.1.1.3.0' and '1.3.0' are equivalent to 'sysUpTime.0'.
 
 ### 一些图
@@ -389,19 +419,19 @@ In the examples above both '.1.3.6.1.2.1.1.3.0' and '1.3.0' are equivalent to 's
 
 ![image](https://user-images.githubusercontent.com/1940588/104808403-f8b8f200-5820-11eb-8d05-1420d1e9e109.png)
 
-
 ### Configure SNMP service on Mac OSX
 
 1. `sudo -i`
 2. `vi /etc/snmp/snmpd.conf`
 3. replace
-  
+
   ```
   com2sec local localhost COMMUNITY
   com2sec mynetwork NETWORK/24 COMMUNITY
   ```
 
-  with
+with
+
   ```
   com2sec local localhost private
   com2sec mynetwork NETWORK/24 public
@@ -437,7 +467,8 @@ In the examples above both '.1.3.6.1.2.1.1.3.0' and '1.3.0' are equivalent to 's
 
 ### Mib Browser
 
-MIB浏览器是工程师管理启用SNMP的网络设备和应用程序不可或缺的工具。 它允许用户加载标准的，专有的MIB，甚至一些错误的MIB。 它还允许它们发出SNMP请求以检索代理的数据，或对代理进行更改。 内置陷阱接收器可以根据其规则引擎接收和处理SNMP陷阱。
+MIB浏览器是工程师管理启用SNMP的网络设备和应用程序不可或缺的工具。 它允许用户加载标准的，专有的MIB，甚至一些错误的MIB。
+它还允许它们发出SNMP请求以检索代理的数据，或对代理进行更改。 内置陷阱接收器可以根据其规则引擎接收和处理SNMP陷阱。
 
 #### iReasoning MIB浏览器
 
@@ -449,7 +480,8 @@ MIB浏览器是工程师管理启用SNMP的网络设备和应用程序不可或�
 
 #### IPNetMonitorX
 
-IPNetMonitorX将直观的Mac用户界面与深入的OS X知识结合在一起，从一个简单的应用程序中提供重要的问题解决细节。如果你曾经为什么一些互联网功能不能正常工作，或者只是想更好地探索和理解，IPNetMonitorX在这里提供帮助。每个工具的内置描述都会澄清底层网络概念，因为它会指导您回答有关Internet如何工作的实际问题。
+IPNetMonitorX将直观的Mac用户界面与深入的OS
+X知识结合在一起，从一个简单的应用程序中提供重要的问题解决细节。如果你曾经为什么一些互联网功能不能正常工作，或者只是想更好地探索和理解，IPNetMonitorX在这里提供帮助。每个工具的内置描述都会澄清底层网络概念，因为它会指导您回答有关Internet如何工作的实际问题。
 
 https://www.osxwin.com/s/ipnetmonitorx
 http://www.sustworks.com/rw_site/download.php
