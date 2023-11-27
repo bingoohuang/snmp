@@ -504,7 +504,7 @@ http://www.sustworks.com/rw_site/download.php
 
 ## logs
 
-1. [gosnmpd](https://github.com/bingoohuang/gosnmpd)
+1. [gosnmpd](https://github.com/bingoohuang/gosnmpd) is an SNMP server library fully written in Go. It provides Server Get, GetNext, GetBulk, Walk, BulkWalk, Set and Traps. It supports IPv4 and IPv6, using SNMPv2c or SNMPv3. Builds are tested against linux/amd64 and linux/386.
 
 ```log
 $ gosnmpd run
